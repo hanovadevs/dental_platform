@@ -69,8 +69,15 @@ export function AppShell({ children, userName, clinicName }: AppShellProps) {
       {/* Navigation Rail */}
       <nav className={styles.rail} aria-label="Primary navigation">
         <div className={styles.railTop}>
-          <Link href="/" className={styles.logo}>
-            {clinicName || 'Dental OS'}
+          <Link href="/" className={styles.logo} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '10px 4px', textAlign: 'center' }}>
+            <img
+              src="/logo.png"
+              alt="Dental OS Logo"
+              style={{ width: '68px', height: '68px', objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(2, 132, 199, 0.25))' }}
+            />
+            <span style={{ fontSize: '1.1rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--color-text-primary)' }}>
+              {clinicName || 'Dental OS'}
+            </span>
           </Link>
           <button
             type="button"

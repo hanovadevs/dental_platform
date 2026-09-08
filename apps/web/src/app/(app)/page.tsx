@@ -31,11 +31,23 @@ export default async function HomePage() {
 
   return (
     <div className={styles.dashboard}>
-      <header className={styles.greeting}>
-        <h1 className={styles.greetingText}>
-          {greeting}, {firstName}
-        </h1>
-        <p className={styles.date}>{dateString}</p>
+      <header className={styles.greeting} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
+        <div>
+          <h1 className={styles.greetingText}>
+            {greeting}, {firstName}
+          </h1>
+          <p className={styles.date}>{dateString}</p>
+        </div>
+        <img
+          src="/logo.png"
+          alt="Dental OS Logo"
+          style={{
+            width: '88px',
+            height: '88px',
+            objectFit: 'contain',
+            filter: 'drop-shadow(0 6px 20px rgba(2, 132, 199, 0.2))',
+          }}
+        />
       </header>
 
       <section className={styles.pulse}>

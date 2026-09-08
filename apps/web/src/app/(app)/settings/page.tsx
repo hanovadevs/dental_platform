@@ -52,11 +52,23 @@ export default async function SettingsPage() {
 
   return (
     <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Clinic Settings</h1>
-        <p className={styles.subtitle}>
-          Manage organization details, physical locations, commercial subscription, and security permissions.
-        </p>
+      <header className={styles.header} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
+        <div>
+          <h1 className={styles.title}>Clinic Settings</h1>
+          <p className={styles.subtitle}>
+            Manage organization details, physical locations, commercial subscription, and security permissions.
+          </p>
+        </div>
+        <img
+          src="/logo.png"
+          alt="Clinic Brand"
+          style={{
+            width: '80px',
+            height: '80px',
+            objectFit: 'contain',
+            filter: 'drop-shadow(0 4px 16px rgba(2, 132, 199, 0.2))',
+          }}
+        />
       </header>
 
       {/* Subscription & Commercial Licensing */}
@@ -107,6 +119,18 @@ export default async function SettingsPage() {
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>Organization Overview</h2>
           <span className={styles.badge}>{org.status}</span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px', padding: '16px', background: 'rgba(255, 255, 255, 0.6)', borderRadius: '12px', border: '1px solid var(--color-divider)' }}>
+          <img
+            src="/logo.png"
+            alt={org.name}
+            style={{ width: '80px', height: '80px', objectFit: 'contain', borderRadius: '10px', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.08))' }}
+          />
+          <div>
+            <h3 style={{ margin: '0 0 4px 0', fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>{org.name}</h3>
+            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>Official Clinic Brand Identity & High-Resolution Asset</p>
+          </div>
         </div>
 
         <div className={styles.grid}>

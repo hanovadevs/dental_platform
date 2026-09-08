@@ -51,7 +51,18 @@ export default function OnboardingPage() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.header}>
+        <div className={styles.header} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <img
+            src="/logo.png"
+            alt="Dental OS Logo"
+            style={{
+              width: '96px',
+              height: '96px',
+              objectFit: 'contain',
+              marginBottom: '16px',
+              filter: 'drop-shadow(0 8px 24px rgba(2, 132, 199, 0.25))',
+            }}
+          />
           <h1 className={styles.title}>Set up your clinic</h1>
           <p className={styles.subtitle}>
             Tell us about your practice to get started.

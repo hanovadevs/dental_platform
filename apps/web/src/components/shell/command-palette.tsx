@@ -181,9 +181,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         aria-label="Command palette"
       >
         <div className={styles.searchBar}>
-          <span className={styles.searchIcon} aria-hidden="true">
-            🔍
-          </span>
+          <img
+            src="/logo.png"
+            alt=""
+            style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+            aria-hidden="true"
+          />
           <input
             ref={inputRef}
             type="text"
