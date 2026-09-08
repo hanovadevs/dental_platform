@@ -39,3 +39,6 @@ coverage/
 
 # drizzle
 packages/db/meta/
+
+.vercel
+.env*
