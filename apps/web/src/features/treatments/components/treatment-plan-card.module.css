@@ -1,0 +1,215 @@
+.card {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.7));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-subtle, rgba(226, 232, 240, 0.8));
+  border-radius: var(--radius-xl, 16px);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--color-border-strong, rgba(203, 213, 225, 0.9));
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-subtle, #f1f5f9);
+}
+
+.titleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #0f172a);
+  margin: 0;
+}
+
+.metaText {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metricsBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-bg-secondary, rgba(248, 250, 252, 0.8));
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--color-border-subtle, #e2e8f0);
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.metricValue {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #0f172a);
+}
+
+.itemsTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.itemsTable th {
+  padding: 0.65rem 0.75rem;
+  background: var(--color-bg-subtle, #f8fafc);
+  color: var(--color-text-secondary, #64748b);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border-subtle, #e2e8f0);
+}
+
+.itemsTable td {
+  padding: 0.75rem 0.75rem;
+  border-bottom: 1px solid var(--color-border-subtle, #f1f5f9);
+  vertical-align: middle;
+}
+
+.itemsTable tr:hover {
+  background: rgba(241, 245, 249, 0.4);
+}
+
+.toothBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.5rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.procInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.procName {
+  font-weight: 600;
+  color: var(--color-text-primary, #0f172a);
+}
+
+.procMeta {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #64748b);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rowActions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.btnAction {
+  padding: 0.3rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--color-border-subtle, #cbd5e1);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btnAction:hover {
+  background: var(--color-bg-subtle, #f8fafc);
+  border-color: var(--color-border-strong, #94a3b8);
+}
+
+.btnAccept {
+  color: #059669;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+.btnAccept:hover {
+  background: #d1fae5;
+  border-color: #34d399;
+}
+
+.btnDecline {
+  color: #dc2626;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+.btnDecline:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+}
+
+.btnComplete {
+  color: #2563eb;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+.btnComplete:hover {
+  background: #dbeafe;
+  border-color: #60a5fa;
+}
+
+.notesArea {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fffbeb;
+  border-left: 3px solid #f59e0b;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #92400e;
+}

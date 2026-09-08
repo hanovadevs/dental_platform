@@ -78,20 +78,46 @@ export const AuditActions = {
   TREATMENT_PLAN_CREATED: 'treatment_plan.created',
   TREATMENT_PLAN_PRESENTED: 'treatment_plan.presented',
   TREATMENT_PLAN_CHANGED: 'treatment_plan.changed',
+  TREATMENT_ITEM_UPDATED: 'treatment_item.updated',
+  PROCEDURE_PERFORMED: 'procedure.performed',
 
   // Appointment
   APPOINTMENT_CREATED: 'appointment.created',
+  APPOINTMENT_UPDATED: 'appointment.updated',
+  APPOINTMENT_STATUS_CHANGED: 'appointment.status_changed',
+  APPOINTMENT_RESCHEDULED: 'appointment.rescheduled',
   APPOINTMENT_CANCELLED: 'appointment.cancelled',
   APPOINTMENT_DELETED: 'appointment.deleted',
 
   // Billing
+  INVOICE_CREATED: 'invoice.created',
+  INVOICE_ADJUSTED: 'invoice.adjusted',
   PAYMENT_RECORDED: 'payment.recorded',
   PAYMENT_REVERSED: 'payment.reversed',
-  INVOICE_ADJUSTED: 'invoice.adjusted',
 
   // Export
   EXPORT_CREATED: 'export.created',
 
   // File
   FILE_ACCESSED: 'file.accessed',
+
+  // Revenue & Recall
+  REVENUE_OPPORTUNITY_CREATED: 'revenue_opportunity.created',
+  REVENUE_OPPORTUNITY_UPDATED: 'revenue_opportunity.updated',
+  REVENUE_OPPORTUNITY_RESOLVED: 'revenue_opportunity.resolved',
+  REVENUE_OPPORTUNITY_SNOOZED: 'revenue_opportunity.snoozed',
+  OUTREACH_LOGGED: 'outreach.logged',
+  RECALL_RULE_CREATED: 'recall_rule.created',
+  RECALL_CREATED: 'recall.created',
+  RECALL_UPDATED: 'recall.updated',
+
+  // Communications
+  COMMUNICATION_SENT: 'communication.sent',
+  COMMUNICATION_FAILED: 'communication.failed',
+  COMMUNICATION_OPT_OUT: 'communication.opt_out',
+  COMMUNICATION_TEMPLATE_CREATED: 'communication_template.created',
+  COMMUNICATION_TEMPLATE_UPDATED: 'communication_template.updated',
+  COMMUNICATION_RULE_CREATED: 'communication_rule.created',
+  COMMUNICATION_RULE_UPDATED: 'communication_rule.updated',
+  APPOINTMENT_CONFIRMED_BY_TOKEN: 'appointment.confirmed_by_token',
 } as const;

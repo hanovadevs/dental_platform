@@ -22,6 +22,34 @@
       "when": 1788788196019,
       "tag": "0002_dark_dexter_bennett",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788789160358,
+      "tag": "0003_medical_slayback",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788801067599,
+      "tag": "0004_lucky_alex_wilder",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788870163190,
+      "tag": "0005_good_johnny_storm",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788871715276,
+      "tag": "0006_funny_ares",
+      "breakpoints": true
     }
   ]
 }

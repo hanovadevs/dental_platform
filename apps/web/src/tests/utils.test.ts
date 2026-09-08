@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { slugify, formatMoney, generateCorrelationId } from '@/lib/utils';
+import { slugify, formatMoney, formatCurrency, formatDate, generateCorrelationId } from '@/lib/utils';
 
 describe('Utils', () => {
   describe('slugify', () => {
@@ -45,4 +45,17 @@ describe('Utils', () => {
       expect(ids.size).toBe(100);
     });
   });
+
+  describe('formatDate', () => {
+    it('formats valid date object correctly', () => {
+      const date = new Date('2026-05-15T12:00:00Z');
+      expect(formatDate(date)).toContain('2026');
+    });
+
+    it('returns empty string for null or invalid dates', () => {
+      expect(formatDate(null)).toBe('');
+      expect(formatDate('invalid-date')).toBe('');
+    });
+  });
 });
+

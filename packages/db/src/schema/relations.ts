@@ -6,6 +6,33 @@ import { auditEvents } from './audit';
 import { staffProfiles, dentistProfiles, staffAvailability, chairs } from './staff';
 import { patients, patientEmergencyContacts, medicalAlerts, allergies } from './patients';
 import { toothConditions, clinicalNotes } from './clinical';
+import {
+  appointmentTypes,
+  appointments,
+  appointmentStatusHistory,
+  waitingListEntries,
+} from './scheduling';
+import {
+  treatmentDefinitions,
+  treatmentPlans,
+  treatmentPlanItems,
+  procedures,
+} from './treatments';
+import { invoices, invoiceItems, payments } from './billing';
+import {
+  revenueOpportunities,
+  revenueAttributions,
+  opportunityOutreachLogs,
+  recallRules,
+  recalls,
+} from './revenue';
+import {
+  communications,
+  communicationConsents,
+  communicationTemplates,
+  communicationRules,
+  confirmationTokens,
+} from './communications';
 
 /**
  * Drizzle ORM relation definitions.
@@ -23,6 +50,24 @@ export const organizationsRelations = relations(organizations, ({ many }) => ({
   patients: many(patients),
   toothConditions: many(toothConditions),
   clinicalNotes: many(clinicalNotes),
+  appointmentTypes: many(appointmentTypes),
+  appointments: many(appointments),
+  waitingListEntries: many(waitingListEntries),
+  treatmentDefinitions: many(treatmentDefinitions),
+  treatmentPlans: many(treatmentPlans),
+  procedures: many(procedures),
+  invoices: many(invoices),
+  payments: many(payments),
+  revenueOpportunities: many(revenueOpportunities),
+  revenueAttributions: many(revenueAttributions),
+  opportunityOutreachLogs: many(opportunityOutreachLogs),
+  recallRules: many(recallRules),
+  recalls: many(recalls),
+  communications: many(communications),
+  communicationConsents: many(communicationConsents),
+  communicationTemplates: many(communicationTemplates),
+  communicationRules: many(communicationRules),
+  confirmationTokens: many(confirmationTokens),
 }));
 
 // Location relations
@@ -34,6 +79,11 @@ export const locationsRelations = relations(locations, ({ one, many }) => ({
   chairs: many(chairs),
   patients: many(patients),
   staffAvailability: many(staffAvailability),
+  appointments: many(appointments),
+  waitingListEntries: many(waitingListEntries),
+  treatmentPlans: many(treatmentPlans),
+  invoices: many(invoices),
+  revenueOpportunities: many(revenueOpportunities),
 }));
 
 // User relations
@@ -42,6 +92,12 @@ export const usersRelations = relations(users, ({ many }) => ({
   createdMedicalAlerts: many(medicalAlerts),
   recordedToothConditions: many(toothConditions),
   signedClinicalNotes: many(clinicalNotes),
+  createdAppointments: many(appointments),
+  appointmentStatusChanges: many(appointmentStatusHistory),
+  recordedPayments: many(payments),
+  assignedOpportunities: many(revenueOpportunities),
+  performedOutreachLogs: many(opportunityOutreachLogs),
+  sentCommunications: many(communications),
 }));
 
 // Role relations
@@ -122,6 +178,9 @@ export const staffProfilesRelations = relations(staffProfiles, ({ one, many }) =
   availability: many(staffAvailability),
   primaryPatients: many(patients),
   clinicalNotes: many(clinicalNotes),
+  appointments: many(appointments),
+  treatmentPlans: many(treatmentPlans),
+  performedProcedures: many(procedures),
 }));
 
 // DentistProfile relations
@@ -153,7 +212,7 @@ export const staffAvailabilityRelations = relations(staffAvailability, ({ one })
 }));
 
 // Chairs relations
-export const chairsRelations = relations(chairs, ({ one }) => ({
+export const chairsRelations = relations(chairs, ({ one, many }) => ({
   organization: one(organizations, {
     fields: [chairs.organizationId],
     references: [organizations.id],
@@ -162,6 +221,7 @@ export const chairsRelations = relations(chairs, ({ one }) => ({
     fields: [chairs.locationId],
     references: [locations.id],
   }),
+  appointments: many(appointments),
 }));
 
 // Patients relations
@@ -183,6 +243,17 @@ export const patientsRelations = relations(patients, ({ one, many }) => ({
   allergies: many(allergies),
   toothConditions: many(toothConditions),
   clinicalNotes: many(clinicalNotes),
+  appointments: many(appointments),
+  waitingListEntries: many(waitingListEntries),
+  treatmentPlans: many(treatmentPlans),
+  procedures: many(procedures),
+  invoices: many(invoices),
+  payments: many(payments),
+  revenueOpportunities: many(revenueOpportunities),
+  opportunityOutreachLogs: many(opportunityOutreachLogs),
+  recalls: many(recalls),
+  communications: many(communications),
+  communicationConsents: many(communicationConsents),
 }));
 
 // PatientEmergencyContact relations
@@ -264,3 +335,396 @@ export const clinicalNotesRelations = relations(clinicalNotes, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+// AppointmentTypes relations
+export const appointmentTypesRelations = relations(appointmentTypes, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [appointmentTypes.organizationId],
+    references: [organizations.id],
+  }),
+  appointments: many(appointments),
+}));
+
+// Appointments relations
+export const appointmentsRelations = relations(appointments, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [appointments.organizationId],
+    references: [organizations.id],
+  }),
+  location: one(locations, {
+    fields: [appointments.locationId],
+    references: [locations.id],
+  }),
+  patient: one(patients, {
+    fields: [appointments.patientId],
+    references: [patients.id],
+  }),
+  dentist: one(staffProfiles, {
+    fields: [appointments.dentistId],
+    references: [staffProfiles.id],
+  }),
+  chair: one(chairs, {
+    fields: [appointments.chairId],
+    references: [chairs.id],
+  }),
+  appointmentType: one(appointmentTypes, {
+    fields: [appointments.appointmentTypeId],
+    references: [appointmentTypes.id],
+  }),
+  creator: one(users, {
+    fields: [appointments.createdBy],
+    references: [users.id],
+  }),
+  statusHistory: many(appointmentStatusHistory),
+  procedures: many(procedures),
+  revenueOpportunities: many(revenueOpportunities),
+  bookedRecalls: many(recalls),
+  communications: many(communications),
+  confirmationTokens: many(confirmationTokens),
+}));
+
+// AppointmentStatusHistory relations
+export const appointmentStatusHistoryRelations = relations(appointmentStatusHistory, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [appointmentStatusHistory.organizationId],
+    references: [organizations.id],
+  }),
+  appointment: one(appointments, {
+    fields: [appointmentStatusHistory.appointmentId],
+    references: [appointments.id],
+  }),
+  changer: one(users, {
+    fields: [appointmentStatusHistory.changedBy],
+    references: [users.id],
+  }),
+}));
+
+// WaitingListEntries relations
+export const waitingListEntriesRelations = relations(waitingListEntries, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [waitingListEntries.organizationId],
+    references: [organizations.id],
+  }),
+  location: one(locations, {
+    fields: [waitingListEntries.locationId],
+    references: [locations.id],
+  }),
+  patient: one(patients, {
+    fields: [waitingListEntries.patientId],
+    references: [patients.id],
+  }),
+  preferredDentist: one(staffProfiles, {
+    fields: [waitingListEntries.preferredDentistId],
+    references: [staffProfiles.id],
+  }),
+  appointmentType: one(appointmentTypes, {
+    fields: [waitingListEntries.appointmentTypeId],
+    references: [appointmentTypes.id],
+  }),
+}));
+
+// TreatmentDefinitions relations
+export const treatmentDefinitionsRelations = relations(treatmentDefinitions, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [treatmentDefinitions.organizationId],
+    references: [organizations.id],
+  }),
+  planItems: many(treatmentPlanItems),
+  procedures: many(procedures),
+  recallRules: many(recallRules),
+}));
+
+// TreatmentPlans relations
+export const treatmentPlansRelations = relations(treatmentPlans, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [treatmentPlans.organizationId],
+    references: [organizations.id],
+  }),
+  location: one(locations, {
+    fields: [treatmentPlans.locationId],
+    references: [locations.id],
+  }),
+  patient: one(patients, {
+    fields: [treatmentPlans.patientId],
+    references: [patients.id],
+  }),
+  dentist: one(staffProfiles, {
+    fields: [treatmentPlans.dentistId],
+    references: [staffProfiles.id],
+  }),
+  items: many(treatmentPlanItems),
+  revenueOpportunities: many(revenueOpportunities),
+}));
+
+// TreatmentPlanItems relations
+export const treatmentPlanItemsRelations = relations(treatmentPlanItems, ({ one }) => ({
+  treatmentPlan: one(treatmentPlans, {
+    fields: [treatmentPlanItems.treatmentPlanId],
+    references: [treatmentPlans.id],
+  }),
+  treatmentDefinition: one(treatmentDefinitions, {
+    fields: [treatmentPlanItems.treatmentDefinitionId],
+    references: [treatmentDefinitions.id],
+  }),
+  procedure: one(procedures),
+  invoiceItem: one(invoiceItems),
+}));
+
+// Procedures relations
+export const proceduresRelations = relations(procedures, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [procedures.organizationId],
+    references: [organizations.id],
+  }),
+  patient: one(patients, {
+    fields: [procedures.patientId],
+    references: [patients.id],
+  }),
+  appointment: one(appointments, {
+    fields: [procedures.appointmentId],
+    references: [appointments.id],
+  }),
+  treatmentPlanItem: one(treatmentPlanItems, {
+    fields: [procedures.treatmentPlanItemId],
+    references: [treatmentPlanItems.id],
+  }),
+  treatmentDefinition: one(treatmentDefinitions, {
+    fields: [procedures.treatmentDefinitionId],
+    references: [treatmentDefinitions.id],
+  }),
+  dentist: one(staffProfiles, {
+    fields: [procedures.dentistId],
+    references: [staffProfiles.id],
+  }),
+  invoiceItem: one(invoiceItems),
+}));
+
+// Invoices relations
+export const invoicesRelations = relations(invoices, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [invoices.organizationId],
+    references: [organizations.id],
+  }),
+  location: one(locations, {
+    fields: [invoices.locationId],
+    references: [locations.id],
+  }),
+  patient: one(patients, {
+    fields: [invoices.patientId],
+    references: [patients.id],
+  }),
+  items: many(invoiceItems),
+  payments: many(payments),
+  revenueOpportunities: many(revenueOpportunities),
+}));
+
+// InvoiceItems relations
+export const invoiceItemsRelations = relations(invoiceItems, ({ one }) => ({
+  invoice: one(invoices, {
+    fields: [invoiceItems.invoiceId],
+    references: [invoices.id],
+  }),
+  procedure: one(procedures, {
+    fields: [invoiceItems.procedureId],
+    references: [procedures.id],
+  }),
+  treatmentPlanItem: one(treatmentPlanItems, {
+    fields: [invoiceItems.treatmentPlanItemId],
+    references: [treatmentPlanItems.id],
+  }),
+}));
+
+// Payments relations
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [payments.organizationId],
+    references: [organizations.id],
+  }),
+  invoice: one(invoices, {
+    fields: [payments.invoiceId],
+    references: [invoices.id],
+  }),
+  patient: one(patients, {
+    fields: [payments.patientId],
+    references: [patients.id],
+  }),
+  recorder: one(users, {
+    fields: [payments.recordedBy],
+    references: [users.id],
+  }),
+}));
+
+// RevenueOpportunities relations
+export const revenueOpportunitiesRelations = relations(revenueOpportunities, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [revenueOpportunities.organizationId],
+    references: [organizations.id],
+  }),
+  location: one(locations, {
+    fields: [revenueOpportunities.locationId],
+    references: [locations.id],
+  }),
+  patient: one(patients, {
+    fields: [revenueOpportunities.patientId],
+    references: [patients.id],
+  }),
+  appointment: one(appointments, {
+    fields: [revenueOpportunities.appointmentId],
+    references: [appointments.id],
+  }),
+  treatmentPlan: one(treatmentPlans, {
+    fields: [revenueOpportunities.treatmentPlanId],
+    references: [treatmentPlans.id],
+  }),
+  invoice: one(invoices, {
+    fields: [revenueOpportunities.invoiceId],
+    references: [invoices.id],
+  }),
+  assignee: one(users, {
+    fields: [revenueOpportunities.assignedTo],
+    references: [users.id],
+  }),
+  outreachLogs: many(opportunityOutreachLogs),
+  attributions: many(revenueAttributions),
+  communications: many(communications),
+}));
+
+// RevenueAttributions relations
+export const revenueAttributionsRelations = relations(revenueAttributions, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [revenueAttributions.organizationId],
+    references: [organizations.id],
+  }),
+  opportunity: one(revenueOpportunities, {
+    fields: [revenueAttributions.opportunityId],
+    references: [revenueOpportunities.id],
+  }),
+}));
+
+// OpportunityOutreachLogs relations
+export const opportunityOutreachLogsRelations = relations(opportunityOutreachLogs, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [opportunityOutreachLogs.organizationId],
+    references: [organizations.id],
+  }),
+  opportunity: one(revenueOpportunities, {
+    fields: [opportunityOutreachLogs.opportunityId],
+    references: [revenueOpportunities.id],
+  }),
+  patient: one(patients, {
+    fields: [opportunityOutreachLogs.patientId],
+    references: [patients.id],
+  }),
+  actor: one(users, {
+    fields: [opportunityOutreachLogs.performedBy],
+    references: [users.id],
+  }),
+}));
+
+// RecallRules relations
+export const recallRulesRelations = relations(recallRules, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [recallRules.organizationId],
+    references: [organizations.id],
+  }),
+  treatmentDefinition: one(treatmentDefinitions, {
+    fields: [recallRules.treatmentDefinitionId],
+    references: [treatmentDefinitions.id],
+  }),
+  recalls: many(recalls),
+}));
+
+// Recalls relations
+export const recallsRelations = relations(recalls, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [recalls.organizationId],
+    references: [organizations.id],
+  }),
+  patient: one(patients, {
+    fields: [recalls.patientId],
+    references: [patients.id],
+  }),
+  rule: one(recallRules, {
+    fields: [recalls.ruleId],
+    references: [recallRules.id],
+  }),
+  bookedAppointment: one(appointments, {
+    fields: [recalls.bookedAppointmentId],
+    references: [appointments.id],
+  }),
+}));
+
+// CommunicationTemplates relations
+export const communicationTemplatesRelations = relations(communicationTemplates, ({ one, many }) => ({
+  organization: one(organizations, {
+    fields: [communicationTemplates.organizationId],
+    references: [organizations.id],
+  }),
+  communications: many(communications),
+  rules: many(communicationRules),
+}));
+
+// CommunicationRules relations
+export const communicationRulesRelations = relations(communicationRules, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [communicationRules.organizationId],
+    references: [organizations.id],
+  }),
+  template: one(communicationTemplates, {
+    fields: [communicationRules.templateId],
+    references: [communicationTemplates.id],
+  }),
+}));
+
+// CommunicationConsents relations
+export const communicationConsentsRelations = relations(communicationConsents, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [communicationConsents.organizationId],
+    references: [organizations.id],
+  }),
+  patient: one(patients, {
+    fields: [communicationConsents.patientId],
+    references: [patients.id],
+  }),
+}));
+
+// Communications relations
+export const communicationsRelations = relations(communications, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [communications.organizationId],
+    references: [organizations.id],
+  }),
+  patient: one(patients, {
+    fields: [communications.patientId],
+    references: [patients.id],
+  }),
+  appointment: one(appointments, {
+    fields: [communications.appointmentId],
+    references: [appointments.id],
+  }),
+  opportunity: one(revenueOpportunities, {
+    fields: [communications.opportunityId],
+    references: [revenueOpportunities.id],
+  }),
+  template: one(communicationTemplates, {
+    fields: [communications.templateId],
+    references: [communicationTemplates.id],
+  }),
+  sender: one(users, {
+    fields: [communications.sentBy],
+    references: [users.id],
+  }),
+}));
+
+// ConfirmationTokens relations
+export const confirmationTokensRelations = relations(confirmationTokens, ({ one }) => ({
+  organization: one(organizations, {
+    fields: [confirmationTokens.organizationId],
+    references: [organizations.id],
+  }),
+  appointment: one(appointments, {
+    fields: [confirmationTokens.appointmentId],
+    references: [appointments.id],
+  }),
+}));
+

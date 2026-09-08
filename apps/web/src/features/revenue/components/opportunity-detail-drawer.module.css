@@ -1,0 +1,281 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+  padding: var(--space-2, 8px) 0;
+}
+
+.errorAlert {
+  padding: var(--space-3, 12px);
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-sm, 0.875rem);
+}
+
+.summaryCard {
+  background-color: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-4, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.summaryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4, 16px);
+}
+
+.summaryTitle {
+  font-size: var(--text-base, 1rem);
+  font-weight: 600;
+  color: var(--color-text-primary, #0f172a);
+  margin: 0 0 var(--space-1, 4px) 0;
+}
+
+.patientLinks {
+  margin-top: 4px;
+}
+
+.viewChartLink {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-primary, #0284c7);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.viewChartLink:hover {
+  text-decoration: underline;
+}
+
+.summaryMetrics {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.metricLabel {
+  font-size: 0.7rem;
+  color: var(--color-text-muted, #94a3b8);
+  text-transform: uppercase;
+}
+
+.metricValue {
+  font-size: var(--text-base, 1rem);
+  font-weight: 700;
+  color: var(--color-text-primary, #0f172a);
+}
+
+.metricRecovered {
+  font-size: var(--text-base, 1rem);
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.summaryMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-2, 8px);
+  font-size: var(--text-xs, 0.75rem);
+  padding-top: var(--space-2, 8px);
+  border-top: 1px solid var(--color-border, #e2e8f0);
+}
+
+.metaLabel {
+  color: var(--color-text-muted, #64748b);
+}
+
+.tabNav {
+  display: flex;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  gap: var(--space-2, 8px);
+  overflow-x: auto;
+}
+
+.tabButton {
+  background: none;
+  border: none;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-secondary, #64748b);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tabButton:hover {
+  color: var(--color-text-primary, #0f172a);
+}
+
+.activeTab {
+  color: var(--color-primary, #0284c7);
+  border-bottom-color: var(--color-primary, #0284c7);
+}
+
+.timelineSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+}
+
+.attributionsBox {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3, 12px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.boxTitle {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #15803d;
+  margin: 0;
+}
+
+.attributionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-xs, 0.75rem);
+  color: #166534;
+}
+
+.attrDate {
+  color: #4ade80;
+}
+
+.emptyLogs {
+  text-align: center;
+  padding: var(--space-6, 24px) 0;
+  color: var(--color-text-muted, #94a3b8);
+  font-size: var(--text-sm, 0.875rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.timelineItem {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3, 12px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+.timelineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timelineMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.channelBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  background-color: var(--color-surface-subtle, #f1f5f9);
+  border: 1px solid var(--color-border, #cbd5e1);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--color-text-secondary, #475569);
+}
+
+.outcomeText {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 500;
+  color: var(--color-text-primary, #0f172a);
+  text-transform: capitalize;
+}
+
+.timelineTime {
+  font-size: 0.7rem;
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.timelineNotes {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-secondary, #475569);
+  background-color: var(--color-surface-subtle, #f8fafc);
+  padding: var(--space-2, 8px);
+  border-radius: var(--radius-sm, 4px);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.timelineActor {
+  font-size: 0.7rem;
+  color: var(--color-text-muted, #94a3b8);
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputLabel {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-primary, #0f172a);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  border: 1px solid var(--color-border, #cbd5e1);
+  border-radius: var(--radius-md, 8px);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-primary, #0f172a);
+  resize: vertical;
+  background-color: var(--color-surface, #ffffff);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary, #0284c7);
+  box-shadow: 0 0 0 1px var(--color-primary, #0284c7);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2, 8px);
+  padding-top: var(--space-3, 12px);
+  border-top: 1px solid var(--color-border, #e2e8f0);
+}

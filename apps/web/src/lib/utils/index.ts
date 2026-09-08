@@ -42,3 +42,31 @@ export function formatMoney(amountMinor: number, currency: string): string {
   const symbol = symbols[currency] ?? currency;
   return `${symbol} ${formatted}`;
 }
+
+/**
+ * Formats a major numeric currency amount to standard display string.
+ */
+export function formatCurrency(amount: number | string, currency: string = 'USD'): string {
+  const num = typeof amount === 'string' ? parseFloat(amount) : Number(amount);
+  if (isNaN(num)) return '$0.00';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+  }).format(num);
+}
+
+/**
+ * Formats a Date or date string to standard display format.
+ */
+export function formatDate(date: Date | string | null | undefined): string {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+

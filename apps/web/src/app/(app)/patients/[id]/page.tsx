@@ -12,8 +12,11 @@ import {
   patientEmergencyContacts,
   toothConditions,
   clinicalNotes,
+  appointments,
+  revenueOpportunities,
+  recalls,
 } from '@dental/db';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 import styles from './patient-profile.module.css';
 import { Badge, MedicalAlertBanner } from '@/components/ui';
 import { PatientActions, ResolveAlertButton, RemoveAllergyButton } from './patient-actions';
@@ -21,6 +24,16 @@ import { DentalChart } from '@/features/clinical/components/dental-chart';
 import { ClinicalNotesView } from '@/features/clinical/components/clinical-notes';
 import { PatientTimelineView } from '@/features/clinical/components/timeline';
 import { getPatientTimeline } from '@/features/clinical/server/actions';
+import { PatientTreatmentsView } from '@/features/treatments/components/patient-treatments-view';
+import { PatientBillingView } from '@/features/billing/components/patient-billing-view';
+import {
+  ensureDefaultTreatmentCatalog,
+  getTreatmentPlansForPatient,
+  getPatientProcedures,
+} from '@/features/treatments/server/actions';
+import { getPatientFinancialSummary } from '@/features/billing/server/actions';
+import { treatmentDefinitions } from '@dental/db';
+import { asc } from 'drizzle-orm';
 
 interface PatientProfilePageProps {
   params: Promise<{
@@ -88,9 +101,30 @@ export default async function PatientProfilePage({
     .where(and(eq(staffProfiles.organizationId, organizationId), eq(staffProfiles.active, true)));
 
   // 3. Tab specific data fetching
+  const activeOpportunities = await db.query.revenueOpportunities.findMany({
+    where: and(
+      eq(revenueOpportunities.patientId, patientId),
+      eq(revenueOpportunities.organizationId, organizationId),
+      inArray(revenueOpportunities.status, ['open', 'in_progress', 'snoozed'])
+    ),
+    orderBy: [desc(revenueOpportunities.estimatedValue)],
+  });
+
+  const patientRecalls = await db.query.recalls.findMany({
+    where: and(
+      eq(recalls.patientId, patientId),
+      eq(recalls.organizationId, organizationId)
+    ),
+    with: {
+      rule: true,
+    },
+    orderBy: [desc(recalls.dueAt)],
+  });
+
   let conditionsData: any[] = [];
   let notesData: any[] = [];
   let timelineEvents: any[] = [];
+  let appointmentsData: any[] = [];
 
   if (tab === 'chart') {
     const rawConditions = await db.query.toothConditions.findMany({
@@ -141,6 +175,57 @@ export default async function PatientProfilePage({
     }));
   } else if (tab === 'timeline') {
     timelineEvents = await getPatientTimeline(organizationId, patientId);
+  } else if (tab === 'appointments') {
+    appointmentsData = await db.query.appointments.findMany({
+      where: and(
+        eq(appointments.patientId, patientId),
+        eq(appointments.organizationId, organizationId)
+      ),
+      with: {
+        chair: true,
+        dentist: true,
+        appointmentType: true,
+      },
+      orderBy: [desc(appointments.startAt)],
+    });
+  }
+
+  let treatmentsData: { plans: any[]; procedures: any[]; catalog: any[] } = {
+    plans: [],
+    procedures: [],
+    catalog: [],
+  };
+  let financialSummaryData: any = null;
+
+  if (tab === 'treatments') {
+    await ensureDefaultTreatmentCatalog(organizationId);
+    const plansResult = await getTreatmentPlansForPatient(organizationId, patientId);
+    const proceduresResult = await getPatientProcedures(organizationId, patientId);
+    const catalog = await db
+      .select()
+      .from(treatmentDefinitions)
+      .where(
+        and(
+          eq(treatmentDefinitions.organizationId, organizationId),
+          eq(treatmentDefinitions.active, true)
+        )
+      )
+      .orderBy(asc(treatmentDefinitions.category), asc(treatmentDefinitions.name));
+
+    treatmentsData = {
+      plans: plansResult.data || [],
+      procedures: proceduresResult.data || [],
+      catalog,
+    };
+  } else if (tab === 'billing') {
+    const summaryResult = await getPatientFinancialSummary(organizationId, patientId);
+    financialSummaryData = summaryResult.data || {
+      totalBilled: 0,
+      totalPaid: 0,
+      outstandingBalance: 0,
+      invoices: [],
+      payments: [],
+    };
   }
 
   const getStatusVariant = (status: string) => {
@@ -241,15 +326,24 @@ export default async function PatientProfilePage({
         >
           Timeline
         </Link>
-        <button type="button" className={styles.tab} disabled title="Appointments arriving in Phase 3">
-          Appointments <span style={{ opacity: 0.5, fontSize: '0.6875rem' }}>(Phase 3)</span>
-        </button>
-        <button type="button" className={styles.tab} disabled title="Treatment plans arriving in Phase 4">
-          Treatments <span style={{ opacity: 0.5, fontSize: '0.6875rem' }}>(Phase 4)</span>
-        </button>
-        <button type="button" className={styles.tab} disabled title="Billing arriving in Phase 5">
-          Billing <span style={{ opacity: 0.5, fontSize: '0.6875rem' }}>(Phase 5)</span>
-        </button>
+        <Link
+          href={`/patients/${patientId}?tab=appointments`}
+          className={[styles.tab, tab === 'appointments' ? styles.tabActive : ''].join(' ')}
+        >
+          Appointments
+        </Link>
+        <Link
+          href={`/patients/${patientId}?tab=treatments`}
+          className={[styles.tab, tab === 'treatments' ? styles.tabActive : ''].join(' ')}
+        >
+          Treatments
+        </Link>
+        <Link
+          href={`/patients/${patientId}?tab=billing`}
+          className={[styles.tab, tab === 'billing' ? styles.tabActive : ''].join(' ')}
+        >
+          Billing
+        </Link>
       </nav>
 
       {/* Tab Content: Alerts View */}
@@ -421,6 +515,53 @@ export default async function PatientProfilePage({
                 </div>
               </div>
             </section>
+
+            {/* Unscheduled Care & Revenue Opportunities */}
+            {activeOpportunities.length > 0 && (
+              <section className={styles.card} style={{ marginTop: 'var(--space-4)', borderLeft: '4px solid var(--color-warning, #f59e0b)' }}>
+                <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h2 className={styles.cardTitle}>Care Opportunities ({activeOpportunities.length})</h2>
+                  <Link href={`/revenue`} style={{ fontSize: 'var(--text-xs)', color: 'var(--color-primary)' }}>
+                    View in Queue &rarr;
+                  </Link>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                  {activeOpportunities.map((opp) => (
+                    <div key={opp.id} style={{ padding: '8px', backgroundColor: 'var(--color-surface-subtle)', borderRadius: '4px', fontSize: 'var(--text-xs)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <Badge variant={opp.priority === 'urgent' ? 'danger' : 'warning'} size="sm">
+                          {opp.priority.toUpperCase()}
+                        </Badge>
+                        <strong>${parseFloat(opp.estimatedValue || '0').toFixed(2)}</strong>
+                      </div>
+                      <div>{opp.reason}</div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Recalls */}
+            {patientRecalls.length > 0 && (
+              <section className={styles.card} style={{ marginTop: 'var(--space-4)' }}>
+                <div className={styles.cardHeader}>
+                  <h2 className={styles.cardTitle}>Recalls & Hygiene Intervals</h2>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                  {patientRecalls.map((rec) => (
+                    <div key={rec.id} style={{ padding: '8px', backgroundColor: 'var(--color-surface-subtle)', borderRadius: '4px', fontSize: 'var(--text-xs)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 600 }}>{rec.rule?.name || 'Hygiene Recall'}</div>
+                        <div style={{ color: 'var(--color-text-muted)' }}>Due: {new Date(rec.dueAt).toLocaleDateString()}</div>
+                      </div>
+                      <Badge variant={rec.status === 'overdue' ? 'danger' : rec.status === 'booked' ? 'success' : 'neutral'} size="sm">
+                        {rec.status.toUpperCase()}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </div>
       )}
@@ -447,6 +588,151 @@ export default async function PatientProfilePage({
       {/* Tab Content: Unified Patient Timeline */}
       {tab === 'timeline' && (
         <PatientTimelineView events={timelineEvents} />
+      )}
+
+      {/* Tab Content: Appointments History */}
+      {tab === 'appointments' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+              Scheduled & Past Appointments ({appointmentsData.length})
+            </h2>
+            <Link
+              href="/calendar"
+              style={{
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--primary-600, #0284c7)',
+                color: '#ffffff',
+                textDecoration: 'none',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+              }}
+            >
+              Open Calendar
+            </Link>
+          </div>
+
+          {appointmentsData.length === 0 ? (
+            <div
+              style={{
+                padding: 'var(--space-10)',
+                background: 'var(--surface-base)',
+                borderRadius: 'var(--radius-xl)',
+                border: '1px solid var(--border-subtle)',
+                textAlign: 'center',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              <p>No appointments recorded for this patient.</p>
+              <Link
+                href="/calendar"
+                style={{
+                  display: 'inline-block',
+                  marginTop: 'var(--space-3)',
+                  color: 'var(--primary-600, #0284c7)',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                }}
+              >
+                Schedule First Appointment on Calendar →
+              </Link>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+              {appointmentsData.map((appt: any) => (
+                <div
+                  key={appt.id}
+                  style={{
+                    padding: 'var(--space-4)',
+                    background: 'var(--surface-base)',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: 'var(--space-3)',
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      <span style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {appt.appointmentType?.name || 'Appointment'}
+                      </span>
+                      <Badge
+                        variant={
+                          appt.status === 'completed'
+                            ? 'success'
+                            : appt.status === 'cancelled' || appt.status === 'no_show'
+                            ? 'danger'
+                            : 'neutral'
+                        }
+                      >
+                        {appt.status.replace('_', ' ')}
+                      </Badge>
+                    </div>
+
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                      {new Date(appt.startAt).toLocaleDateString(undefined, {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}{' '}
+                      at{' '}
+                      {new Date(appt.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
+                      {new Date(appt.endAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '2px' }}>
+                      Dr. {appt.dentist?.displayName || 'Practitioner'} • {appt.chair?.name || 'Chair'}
+                    </div>
+
+                    {appt.notes && (
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                        Notes: {appt.notes}
+                      </p>
+                    )}
+
+                    {appt.cancellationReason && (
+                      <p style={{ fontSize: '0.8125rem', color: 'var(--color-danger, #dc2626)', marginTop: '4px' }}>
+                        Cancellation Reason: {appt.cancellationReason}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tab Content: Treatments View */}
+      {tab === 'treatments' && (
+        <PatientTreatmentsView
+          organizationId={organizationId}
+          patientId={patientId}
+          patientName={`${patient.firstName} ${patient.lastName}`}
+          patientNumber={patient.patientNumber}
+          plans={treatmentsData.plans}
+          procedures={treatmentsData.procedures}
+          catalog={treatmentsData.catalog}
+          dentists={orgDentists}
+          locations={orgLocations}
+        />
+      )}
+
+      {/* Tab Content: Billing View */}
+      {tab === 'billing' && financialSummaryData && (
+        <PatientBillingView
+          organizationId={organizationId}
+          patientId={patientId}
+          patientName={`${patient.firstName} ${patient.lastName}`}
+          patientNumber={patient.patientNumber}
+          financialSummary={financialSummaryData}
+          locations={orgLocations}
+        />
       )}
     </div>
   );
