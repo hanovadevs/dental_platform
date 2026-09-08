@@ -379,6 +379,7 @@ export function RevenueClientView({
       {/* Drawer */}
       <OpportunityDetailDrawer
         open={isDrawerOpen}
+        organizationId={organizationId}
         opportunity={selectedOpportunity}
         onClose={() => setIsDrawerOpen(false)}
         onLogOutreach={handleLogOutreach}

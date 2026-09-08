@@ -5,6 +5,7 @@ import {
   text,
   boolean,
   timestamp,
+  index,
 } from 'drizzle-orm/pg-core';
 import { organizations } from './organizations';
 import { users } from './users';
@@ -35,7 +36,10 @@ export const toothConditions = pgTable('tooth_conditions', {
   recordedAt: timestamp('recorded_at', { withTimezone: true }).notNull().defaultNow(),
   supersedesId: uuid('supersedes_id'),
   active: boolean('active').notNull().default(true),
-});
+}, (table) => [
+  index('tooth_conds_patient_tooth_idx').on(table.patientId, table.toothCode),
+  index('tooth_conds_org_patient_idx').on(table.organizationId, table.patientId),
+]);
 
 /**
  * Clinical Progress Notes (SOAP notes).
@@ -61,4 +65,7 @@ export const clinicalNotes = pgTable('clinical_notes', {
   signedAt: timestamp('signed_at', { withTimezone: true }).notNull().defaultNow(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index('clinical_notes_patient_created_idx').on(table.patientId, table.createdAt),
+  index('clinical_notes_org_patient_idx').on(table.organizationId, table.patientId),
+]);

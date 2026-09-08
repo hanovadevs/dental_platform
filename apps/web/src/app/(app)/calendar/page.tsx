@@ -95,7 +95,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
         with: {
           changer: true,
         },
-        orderBy: [desc(appointments.createdAt)],
+        orderBy: (history, { desc }) => [desc(history.changedAt)],
       },
     },
   });

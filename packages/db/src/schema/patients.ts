@@ -7,6 +7,7 @@ import {
   date,
   timestamp,
   pgEnum,
+  index,
 } from 'drizzle-orm/pg-core';
 import { organizations, locations } from './organizations';
 import { users } from './users';
@@ -64,7 +65,12 @@ export const patients = pgTable('patients', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   archivedAt: timestamp('archived_at', { withTimezone: true }),
-});
+}, (table) => [
+  index('patients_org_status_idx').on(table.organizationId, table.status),
+  index('patients_org_phone_idx').on(table.organizationId, table.phone),
+  index('patients_org_name_idx').on(table.organizationId, table.lastName, table.firstName),
+  index('patients_org_patient_number_idx').on(table.organizationId, table.patientNumber),
+]);
 
 /**
  * Patient Emergency Contacts.
@@ -83,7 +89,9 @@ export const patientEmergencyContacts = pgTable('patient_emergency_contacts', {
   phone: varchar('phone', { length: 50 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index('patient_contacts_patient_idx').on(table.patientId),
+]);
 
 /**
  * Medical Alerts.
@@ -107,7 +115,9 @@ export const medicalAlerts = pgTable('medical_alerts', {
     .references(() => users.id),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   resolvedAt: timestamp('resolved_at', { withTimezone: true }),
-});
+}, (table) => [
+  index('patient_alerts_patient_idx').on(table.patientId),
+]);
 
 /**
  * Patient Allergies.
@@ -127,4 +137,6 @@ export const allergies = pgTable('allergies', {
   severity: medicalAlertSeverityEnum('severity').notNull().default('medium'),
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index('patient_allergies_patient_idx').on(table.patientId),
+]);

@@ -120,4 +120,38 @@ export const AuditActions = {
   COMMUNICATION_RULE_CREATED: 'communication_rule.created',
   COMMUNICATION_RULE_UPDATED: 'communication_rule.updated',
   APPOINTMENT_CONFIRMED_BY_TOKEN: 'appointment.confirmed_by_token',
+
+  // Inventory
+  INVENTORY_ITEM_CREATED: 'inventory_item.created',
+  INVENTORY_ITEM_UPDATED: 'inventory_item.updated',
+  INVENTORY_STOCK_ADJUSTED: 'inventory_stock.adjusted',
+
+  // Dental Lab
+  LAB_VENDOR_CREATED: 'lab_vendor.created',
+  LAB_CASE_CREATED: 'lab_case.created',
+  LAB_CASE_UPDATED: 'lab_case.updated',
+  LAB_CASE_STATUS_CHANGED: 'lab_case.status_changed',
+
+  // Prescriptions & Documents
+  PRESCRIPTION_CREATED: 'prescription.created',
+  MEDICATION_TEMPLATE_CREATED: 'medication_template.created',
+  CONSENT_TEMPLATE_CREATED: 'consent_template.created',
+  DOCUMENT_SIGNED: 'document.signed',
+  DOCUMENT_UPLOADED: 'document.uploaded',
+
+  // Analytics & Reports
+  REPORT_EXPORTED: 'report.exported',
+
+  // Commercial, Subscription & GDPR
+  SUBSCRIPTION_PLAN_CHANGED: 'subscription.plan_changed',
+  PATIENT_DATA_ANONYMIZED: 'patient_data.anonymized',
+  PRACTICE_DATA_EXPORTED: 'practice_data.exported',
+  PATIENTS_BULK_IMPORTED: 'patients.bulk_imported',
+
+  // AI Voice Agent (Phase 10)
+  VOICE_CALL_TASK_CREATED: 'voice_call.task_created',
+  VOICE_CALL_DISPATCHED: 'voice_call.dispatched',
+  VOICE_CALL_COMPLETED: 'voice_call.completed',
+  VOICE_CALL_ESCALATED: 'voice_call.escalated',
 } as const;
+

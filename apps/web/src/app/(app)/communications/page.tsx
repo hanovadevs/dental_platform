@@ -9,6 +9,7 @@ import {
   getTemplates,
   getCommunicationRules,
 } from '@/features/communications/server/actions';
+import { getVoiceCallTasks } from '@/features/voice-agent/server/actions';
 import { CommunicationsClientView } from './communications-client-view';
 
 export const metadata = {
@@ -35,10 +36,13 @@ export default async function CommunicationsPage() {
   // Ensure default templates exist
   await ensureDefaultTemplates(organizationId);
 
-  // Fetch initial logs, templates, rules
-  const logsRes = await getCommunicationLogs(organizationId);
-  const templatesRes = await getTemplates(organizationId);
-  const rulesRes = await getCommunicationRules(organizationId);
+  // Fetch initial logs, templates, rules, and voice tasks
+  const [logsRes, templatesRes, rulesRes, voiceTasksRes] = await Promise.all([
+    getCommunicationLogs(organizationId),
+    getTemplates(organizationId),
+    getCommunicationRules(organizationId),
+    getVoiceCallTasks(organizationId),
+  ]);
 
   // Fetch patient dropdown list
   const rawPatients = await db
@@ -66,7 +70,9 @@ export default async function CommunicationsPage() {
       initialLogs={logsRes.data || []}
       initialTemplates={templatesRes.data || []}
       initialRules={rulesRes.data || []}
+      initialVoiceTasks={voiceTasksRes.data || []}
       patientsList={patientsList}
     />
   );
 }
+

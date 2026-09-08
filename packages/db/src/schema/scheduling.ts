@@ -7,6 +7,7 @@ import {
   timestamp,
   integer,
   numeric,
+  index,
 } from 'drizzle-orm/pg-core';
 import { organizations, locations } from './organizations';
 import { users } from './users';
@@ -23,6 +24,7 @@ export const appointmentTypes = pgTable('appointment_types', {
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 100 }).notNull(),
+  description: text('description'),
   durationMinutes: integer('duration_minutes').default(30).notNull(),
   color: varchar('color', { length: 30 }).default('#0284c7').notNull(),
   defaultPrice: numeric('default_price', { precision: 12, scale: 2 }),
@@ -33,6 +35,7 @@ export const appointmentTypes = pgTable('appointment_types', {
 /**
  * Core Appointment entity.
  * Per spec (05_DATA_MODEL_AND_DOMAIN.md Section 7).
+ * High-reliability scheduling with concurrency guards against double booking.
  */
 export const appointments = pgTable('appointments', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -71,7 +74,13 @@ export const appointments = pgTable('appointments', {
     .references(() => users.id, { onDelete: 'restrict' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('appts_org_time_idx').on(table.organizationId, table.startAt, table.endAt),
+  index('appts_dentist_time_idx').on(table.dentistId, table.startAt, table.endAt),
+  index('appts_chair_time_idx').on(table.chairId, table.startAt, table.endAt),
+  index('appts_patient_time_idx').on(table.patientId, table.startAt),
+  index('appts_org_status_idx').on(table.organizationId, table.status),
+]);
 
 /**
  * Appointment Status Transition History (Immutable Audit Log).
@@ -93,7 +102,9 @@ export const appointmentStatusHistory = pgTable('appointment_status_history', {
     .notNull()
     .references(() => users.id, { onDelete: 'restrict' }),
   changedAt: timestamp('changed_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('appt_history_appt_idx').on(table.appointmentId, table.changedAt),
+]);
 
 /**
  * Waiting List entries for filling cancelled or open chair slots (ChairFill).
@@ -120,4 +131,6 @@ export const waitingListEntries = pgTable('waiting_list_entries', {
   status: varchar('status', { length: 20 }).default('waiting').notNull(), // 'waiting' | 'scheduled' | 'cancelled'
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('waiting_list_org_status_idx').on(table.organizationId, table.status),
+]);

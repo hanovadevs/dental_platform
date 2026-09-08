@@ -88,7 +88,7 @@ export function PatientTreatmentsView({
               color: '#64748b',
             }}
           >
-            No treatment plans recorded for this patient. Click "+ New Treatment Plan" to build one.
+            No treatment plans recorded for this patient. Click &ldquo;+ New Treatment Plan&rdquo; to build one.
           </div>
         ) : (
           plans.map((plan) => (

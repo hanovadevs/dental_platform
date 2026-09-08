@@ -13,6 +13,7 @@ import { eq, and, or, ilike, desc } from 'drizzle-orm';
 import styles from './patients.module.css';
 import { Badge, EmptyState, Input } from '@/components/ui';
 import { NewPatientDialog } from './new-patient-dialog';
+import { ImportCsvDialog } from './import-csv-dialog';
 
 interface PatientsPageProps {
   searchParams: Promise<{
@@ -108,6 +109,10 @@ export default async function PatientsPage({ searchParams }: PatientsPageProps) 
           </p>
         </div>
         <div className={styles.topActions}>
+          <ImportCsvDialog
+            organizationId={organizationId}
+            locations={orgLocations}
+          />
           <NewPatientDialog
             organizationId={organizationId}
             locations={orgLocations}

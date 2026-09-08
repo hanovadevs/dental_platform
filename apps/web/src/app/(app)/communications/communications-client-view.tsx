@@ -15,6 +15,7 @@ import {
   COMMUNICATION_CHANNELS,
   TEMPLATE_CATEGORIES,
 } from '@/features/communications/domain/types';
+import { VoiceQueueView } from '@/features/voice-agent/components/voice-queue-view';
 import styles from './communications.module.css';
 
 export interface CommunicationsClientViewProps {
@@ -22,6 +23,7 @@ export interface CommunicationsClientViewProps {
   initialLogs: any[];
   initialTemplates: any[];
   initialRules: any[];
+  initialVoiceTasks?: any[];
   patientsList: Array<{ id: string; name: string; phone?: string | null; email?: string | null }>;
 }
 
@@ -30,12 +32,14 @@ export function CommunicationsClientView({
   initialLogs,
   initialTemplates,
   initialRules,
+  initialVoiceTasks = [],
   patientsList,
 }: CommunicationsClientViewProps) {
-  const [activeTab, setActiveTab] = useState<'logs' | 'templates' | 'rules'>('logs');
+  const [activeTab, setActiveTab] = useState<'logs' | 'templates' | 'rules' | 'voice'>('logs');
   const [logs, setLogs] = useState<any[]>(initialLogs);
   const [templates, setTemplates] = useState<any[]>(initialTemplates);
   const [rules, setRules] = useState<any[]>(initialRules);
+  const [voiceTasks, setVoiceTasks] = useState<any[]>(initialVoiceTasks);
 
   // Filters for logs
   const [channelFilter, setChannelFilter] = useState<string>('all');
@@ -47,6 +51,7 @@ export function CommunicationsClientView({
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
 
   // Send Message Form State
+  const [msgCategory, setMsgCategory] = useState<'operational' | 'marketing' | 'recalls' | 'billing'>('operational');
   const [selectedPatientId, setSelectedPatientId] = useState<string>('');
   const [recipient, setRecipient] = useState<string>('');
   const [msgChannel, setMsgChannel] = useState<CommunicationChannel>('sms');
@@ -108,6 +113,7 @@ export function CommunicationsClientView({
       const res = await sendMessage(organizationId, {
         patientId: selectedPatientId || undefined,
         channel: msgChannel,
+        category: msgCategory,
         recipient,
         subject: msgChannel === 'email' ? msgSubject : undefined,
         body: msgBody,
@@ -274,6 +280,13 @@ export function CommunicationsClientView({
         >
           Automation Rules ({rules.length})
         </button>
+        <button
+          type="button"
+          className={[styles.tabButton, activeTab === 'voice' ? styles.activeTab : ''].join(' ')}
+          onClick={() => setActiveTab('voice')}
+        >
+          🤖 AI Voice Queue ({voiceTasks.length})
+        </button>
       </div>
 
       {/* Tab 1: Message Logs */}
@@ -438,6 +451,13 @@ export function CommunicationsClientView({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Tab 4: AI Voice Agent Queue */}
+      {activeTab === 'voice' && (
+        <div className={styles.tabContent}>
+          <VoiceQueueView tasks={voiceTasks} />
         </div>
       )}
 

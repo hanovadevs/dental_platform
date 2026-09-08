@@ -50,6 +50,34 @@
       "when": 1788871715276,
       "tag": "0006_funny_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788875186265,
+      "tag": "0007_panoramic_silver_centurion",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788878407515,
+      "tag": "0008_dapper_pestilence",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788880224175,
+      "tag": "0009_flowery_loners",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788884369159,
+      "tag": "0010_great_pepper_potts",
+      "breakpoints": true
     }
   ]
 }

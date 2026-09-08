@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs';
  * Per spec (00_START_HERE.md Section 6, 08_SECURITY_PRIVACY_AND_AUDIT.md Section 3).
  */
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: 'credentials',

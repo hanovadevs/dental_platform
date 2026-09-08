@@ -6,6 +6,7 @@ import {
   timestamp,
   integer,
   numeric,
+  index,
 } from 'drizzle-orm/pg-core';
 import { organizations, locations } from './organizations';
 import { patients } from './patients';
@@ -41,7 +42,10 @@ export const invoices = pgTable('invoices', {
   dueAt: timestamp('due_at', { withTimezone: true }),
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('invoices_org_status_idx').on(table.organizationId, table.status),
+  index('invoices_patient_created_idx').on(table.patientId, table.createdAt),
+]);
 
 /**
  * Line items within an Invoice.
@@ -63,7 +67,9 @@ export const invoiceItems = pgTable('invoice_items', {
   unitPrice: numeric('unit_price', { precision: 12, scale: 2 }).notNull(),
   discount: numeric('discount', { precision: 12, scale: 2 }).default('0').notNull(),
   total: numeric('total', { precision: 12, scale: 2 }).notNull(),
-});
+}, (table) => [
+  index('invoice_items_invoice_idx').on(table.invoiceId),
+]);
 
 /**
  * Payments & Financial Receipts.
@@ -92,4 +98,8 @@ export const payments = pgTable('payments', {
     .references(() => users.id, { onDelete: 'restrict' }),
   status: varchar('status', { length: 20 }).default('completed').notNull(), // 'completed' | 'reversed'
   notes: text('notes'),
-});
+}, (table) => [
+  index('payments_invoice_idx').on(table.invoiceId),
+  index('payments_org_date_idx').on(table.organizationId, table.paidAt),
+  index('payments_patient_idx').on(table.patientId),
+]);

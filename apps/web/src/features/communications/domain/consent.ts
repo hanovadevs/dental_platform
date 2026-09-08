@@ -34,7 +34,7 @@ export function canSendMessage(input: ConsentCheckInput): ConsentCheckResult {
 
   // 1. Check if patient explicitly opted out of this specific channel completely
   const channelOptOut = patientConsents.find(
-    (c) => c.channel === channel && c.consented === false
+    (c) => c.channel === channel && (c.category === 'all' || !c.category) && c.consented === false
   );
 
   if (channelOptOut) {
@@ -44,22 +44,26 @@ export function canSendMessage(input: ConsentCheckInput): ConsentCheckResult {
     };
   }
 
-  // 2. Check category-specific consent
+  // 2. Check category-specific consent on this channel
   const categoryConsent = patientConsents.find(
-    (c) => c.channel === channel && c.category === category
+    (c) => c.channel === channel && c.category === category && c.consented === false
   );
 
-  if (categoryConsent && !categoryConsent.consented) {
+  if (categoryConsent) {
     return {
       allowed: false,
-      reason: `Patient has opted out of ${category} communications`,
+      reason: category === 'marketing'
+        ? 'Patient has opted out of marketing communications'
+        : `Patient has opted out of communications via ${channel.toUpperCase()}`,
     };
   }
 
   // 3. Marketing messages require explicit opt-in or non-opted-out state
   if (category === 'marketing') {
-    const marketingConsent = patientConsents.find((c) => c.category === 'marketing');
-    if (marketingConsent && !marketingConsent.consented) {
+    const marketingOptOut = patientConsents.find(
+      (c) => c.category === 'marketing' && c.consented === false
+    );
+    if (marketingOptOut) {
       return {
         allowed: false,
         reason: 'Patient has opted out of marketing communications',

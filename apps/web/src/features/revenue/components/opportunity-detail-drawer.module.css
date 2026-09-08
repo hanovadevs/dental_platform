@@ -279,3 +279,55 @@
   padding-top: var(--space-3, 12px);
   border-top: 1px solid var(--color-border, #e2e8f0);
 }
+
+.subTabNav {
+  display: flex;
+  gap: var(--space-2, 8px);
+  background-color: var(--color-surface-subtle, #f1f5f9);
+  padding: 4px;
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: var(--space-2, 8px);
+}
+
+.subTabButton {
+  flex: 1;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary, #64748b);
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.subTabButton:hover {
+  color: var(--color-text-primary, #0f172a);
+}
+
+.activeSubTab {
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-primary, #0284c7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.recipientInfo {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-secondary, #64748b);
+  background-color: var(--color-surface-subtle, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+}
+
+.infoWarning {
+  font-size: var(--text-xs, 0.75rem);
+  color: #b45309;
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm, 6px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+}
+

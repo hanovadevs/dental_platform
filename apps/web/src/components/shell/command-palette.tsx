@@ -64,13 +64,31 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
       },
       {
         id: 'nav-operations',
-        title: 'Go to Operations',
+        title: 'Go to Operations (Staff & Clinic Workflows)',
         category: 'Navigation',
         perform: () => router.push('/operations'),
       },
       {
+        id: 'nav-inventory',
+        title: 'Go to Inventory & Supply Tracking',
+        category: 'Navigation',
+        perform: () => router.push('/operations?tab=inventory'),
+      },
+      {
+        id: 'nav-labs',
+        title: 'Go to Dental Lab Cases & Vendors',
+        category: 'Navigation',
+        perform: () => router.push('/operations?tab=labs'),
+      },
+      {
+        id: 'nav-templates',
+        title: 'Go to Clinical Medication & Consent Templates',
+        category: 'Navigation',
+        perform: () => router.push('/operations?tab=templates'),
+      },
+      {
         id: 'nav-reports',
-        title: 'Go to Reports',
+        title: 'Go to Executive Reports & Analytics',
         category: 'Navigation',
         perform: () => router.push('/reports'),
       },
@@ -115,9 +133,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   // Focus input when opened
   useEffect(() => {
     if (open) {
-      setQuery('');
-      setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
+      const timer = setTimeout(() => {
+        setQuery('');
+        setSelectedIndex(0);
+        inputRef.current?.focus();
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [open]);
 

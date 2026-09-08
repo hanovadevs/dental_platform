@@ -17,6 +17,7 @@ import {
   recalls,
   communications,
   communicationConsents,
+  labCases,
 } from '@dental/db';
 import { eq, and, desc, inArray } from 'drizzle-orm';
 import styles from './patient-profile.module.css';
@@ -34,6 +35,14 @@ import {
   getPatientProcedures,
 } from '@/features/treatments/server/actions';
 import { getPatientFinancialSummary } from '@/features/billing/server/actions';
+import {
+  getPrescriptions,
+  getMedicationTemplates,
+  getPatientDocuments,
+  getConsentTemplates,
+} from '@/features/workflows/server/clinical-docs-actions';
+import { PatientPrescriptionsView } from '@/features/workflows/components/patient-prescriptions-view';
+import { PatientDocumentsView } from '@/features/workflows/components/patient-documents-view';
 import { treatmentDefinitions } from '@dental/db';
 import { asc } from 'drizzle-orm';
 
@@ -198,6 +207,8 @@ export default async function PatientProfilePage({
     catalog: [],
   };
   let financialSummaryData: any = null;
+  let patientCommunicationsData: any[] = [];
+  let patientConsentsData: any[] = [];
 
   if (tab === 'treatments') {
     await ensureDefaultTreatmentCatalog(organizationId);
@@ -247,6 +258,41 @@ export default async function PatientProfilePage({
         eq(communicationConsents.organizationId, organizationId)
       ),
     });
+  }
+
+  // Active Lab Cases for overview
+  const patientLabCases = await db.query.labCases.findMany({
+    where: and(
+      eq(labCases.patientId, patientId),
+      eq(labCases.organizationId, organizationId)
+    ),
+    with: {
+      vendor: true,
+      appointment: true,
+    },
+    orderBy: [desc(labCases.createdAt)],
+  });
+
+  let prescriptionsData: any[] = [];
+  let medicationTemplatesData: any[] = [];
+  if (tab === 'prescriptions') {
+    const [pRes, tRes] = await Promise.all([
+      getPrescriptions(organizationId, patientId),
+      getMedicationTemplates(organizationId),
+    ]);
+    prescriptionsData = pRes.data || [];
+    medicationTemplatesData = tRes.data || [];
+  }
+
+  let patientDocumentsData: any[] = [];
+  let consentTemplatesData: any[] = [];
+  if (tab === 'documents') {
+    const [dRes, cRes] = await Promise.all([
+      getPatientDocuments(organizationId, patientId),
+      getConsentTemplates(organizationId),
+    ]);
+    patientDocumentsData = dRes.data || [];
+    consentTemplatesData = cRes.data || [];
   }
 
   const getStatusVariant = (status: string) => {
@@ -364,6 +410,18 @@ export default async function PatientProfilePage({
           className={[styles.tab, tab === 'billing' ? styles.tabActive : ''].join(' ')}
         >
           Billing
+        </Link>
+        <Link
+          href={`/patients/${patientId}?tab=prescriptions`}
+          className={[styles.tab, tab === 'prescriptions' ? styles.tabActive : ''].join(' ')}
+        >
+          Prescriptions
+        </Link>
+        <Link
+          href={`/patients/${patientId}?tab=documents`}
+          className={[styles.tab, tab === 'documents' ? styles.tabActive : ''].join(' ')}
+        >
+          Documents & Consents
         </Link>
         <Link
           href={`/patients/${patientId}?tab=communications`}
@@ -589,6 +647,31 @@ export default async function PatientProfilePage({
                 </div>
               </section>
             )}
+
+            {/* Dental Lab Cases */}
+            {patientLabCases.length > 0 && (
+              <section className={styles.card} style={{ marginTop: 'var(--space-4)' }}>
+                <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h2 className={styles.cardTitle}>Lab Cases ({patientLabCases.length})</h2>
+                  <Link href="/operations?tab=labs" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-primary)' }}>
+                    Manage Labs &rarr;
+                  </Link>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                  {patientLabCases.map((lc) => (
+                    <div key={lc.id} style={{ padding: '8px', backgroundColor: 'var(--color-surface-subtle)', borderRadius: '4px', fontSize: 'var(--text-xs)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 600 }}>{lc.workType.replace('_', ' ')} {lc.shade ? `(${lc.shade})` : ''}</div>
+                        <div style={{ color: 'var(--color-text-muted)' }}>Lab: {lc.vendor?.name || 'External Lab'} • Due: {lc.expectedDate ? new Date(lc.expectedDate).toLocaleDateString() : 'N/A'}</div>
+                      </div>
+                      <Badge variant={lc.status === 'delivered' ? 'success' : lc.status === 'sent' ? 'warning' : lc.status === 'rework' ? 'danger' : 'info'} size="sm">
+                        {lc.status.replace('_', ' ').toUpperCase()}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         </div>
       )}
@@ -771,7 +854,7 @@ export default async function PatientProfilePage({
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)' }}>
               {['sms', 'email', 'whatsapp'].map((ch) => {
-                const optOut = patientConsentsData.find((c) => c.channel === ch && !c.consented);
+                const optOut = patientConsentsData.find((c: any) => c.channel === ch && !c.consented);
                 return (
                   <div key={ch} style={{ padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px', backgroundColor: 'var(--color-surface-subtle)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -801,7 +884,7 @@ export default async function PatientProfilePage({
               <p className={styles.listItemMeta}>No messages recorded for this patient.</p>
             ) : (
               <div className={styles.listGroup}>
-                {patientCommunicationsData.map((comm) => (
+                {patientCommunicationsData.map((comm: any) => (
                   <div key={comm.id} className={styles.listItem}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -830,6 +913,27 @@ export default async function PatientProfilePage({
             )}
           </section>
         </div>
+      )}
+
+      {/* Tab Content: Prescriptions View */}
+      {tab === 'prescriptions' && (
+        <PatientPrescriptionsView
+          organizationId={organizationId}
+          patientId={patientId}
+          prescriptions={prescriptionsData}
+          medicationTemplates={medicationTemplatesData}
+        />
+      )}
+
+      {/* Tab Content: Documents & Consents View */}
+      {tab === 'documents' && (
+        <PatientDocumentsView
+          organizationId={organizationId}
+          patientId={patientId}
+          patientName={`${patient.firstName} ${patient.lastName}`}
+          documents={patientDocumentsData}
+          consentTemplates={consentTemplatesData}
+        />
       )}
     </div>
   );

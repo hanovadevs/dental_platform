@@ -7,6 +7,7 @@ import {
   timestamp,
   integer,
   numeric,
+  index,
 } from 'drizzle-orm/pg-core';
 import { organizations, locations } from './organizations';
 import { patients } from './patients';
@@ -62,7 +63,10 @@ export const revenueOpportunities = pgTable('revenue_opportunities', {
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('revenue_opps_org_status_prio_idx').on(table.organizationId, table.status, table.priority),
+  index('revenue_opps_patient_idx').on(table.patientId),
+]);
 
 /**
  * Revenue Attribution (Direct causal attribution of recovered revenue).
@@ -84,7 +88,9 @@ export const revenueAttributions = pgTable('revenue_attributions', {
   currency: varchar('currency', { length: 10 }).default('USD').notNull(),
   occurredAt: timestamp('occurred_at', { withTimezone: true }).defaultNow().notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('revenue_attr_org_occurred_idx').on(table.organizationId, table.occurredAt),
+]);
 
 /**
  * Opportunity Outreach & Contact History.
@@ -155,4 +161,7 @@ export const recalls = pgTable('recalls', {
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('recalls_org_status_due_idx').on(table.organizationId, table.status, table.dueAt),
+  index('recalls_patient_idx').on(table.patientId),
+]);

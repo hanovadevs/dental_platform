@@ -11,5 +11,8 @@ export * from './treatments';
 export * from './billing';
 export * from './revenue';
 export * from './communications';
+export * from './clinic-workflows';
+export * from './subscriptions';
+export * from './voice-agent';
 export * from './relations';
 

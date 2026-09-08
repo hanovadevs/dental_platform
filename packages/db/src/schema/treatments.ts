@@ -7,6 +7,7 @@ import {
   timestamp,
   integer,
   numeric,
+  index,
 } from 'drizzle-orm/pg-core';
 import { organizations, locations } from './organizations';
 import { patients } from './patients';
@@ -32,7 +33,9 @@ export const treatmentDefinitions = pgTable('treatment_definitions', {
   surfaceSpecific: boolean('surface_specific').default(false).notNull(),
   active: boolean('active').default(true).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('treat_defs_org_code_idx').on(table.organizationId, table.code),
+]);
 
 /**
  * Comprehensive Patient Treatment Plan.
@@ -59,7 +62,10 @@ export const treatmentPlans = pgTable('treatment_plans', {
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  index('treat_plans_patient_status_idx').on(table.patientId, table.status),
+  index('treat_plans_org_idx').on(table.organizationId, table.createdAt),
+]);
 
 /**
  * Individual Line Items inside a Treatment Plan.
@@ -84,7 +90,9 @@ export const treatmentPlanItems = pgTable('treatment_plan_items', {
   acceptedAt: timestamp('accepted_at', { withTimezone: true }),
   completedAt: timestamp('completed_at', { withTimezone: true }),
   notes: text('notes'),
-});
+}, (table) => [
+  index('treat_items_plan_status_idx').on(table.treatmentPlanId, table.status),
+]);
 
 /**
  * Completed Procedures (Clinical Execution History).
@@ -114,4 +122,7 @@ export const procedures = pgTable('procedures', {
   surface: varchar('surface', { length: 20 }),
   performedAt: timestamp('performed_at', { withTimezone: true }).defaultNow().notNull(),
   notes: text('notes'),
-});
+}, (table) => [
+  index('procedures_patient_date_idx').on(table.patientId, table.performedAt),
+  index('procedures_org_date_idx').on(table.organizationId, table.performedAt),
+]);

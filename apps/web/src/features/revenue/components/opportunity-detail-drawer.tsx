@@ -12,10 +12,13 @@ import {
   OutreachOutcome,
   ResolutionType,
 } from '../domain/types';
+import { sendMessage } from '@/features/communications/server/actions';
+import { DispatchCallDialog } from '@/features/voice-agent/components/dispatch-call-dialog';
 import styles from './opportunity-detail-drawer.module.css';
 
 export interface OpportunityDetailDrawerProps {
   open: boolean;
+  organizationId?: string;
   opportunity: any | null;
   onClose: () => void;
   onLogOutreach: (data: {
@@ -40,6 +43,7 @@ export interface OpportunityDetailDrawerProps {
 
 export function OpportunityDetailDrawer({
   open,
+  organizationId,
   opportunity,
   onClose,
   onLogOutreach,
@@ -51,10 +55,23 @@ export function OpportunityDetailDrawer({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Outreach Form State
+  const [outreachMode, setOutreachMode] = useState<'message' | 'log'>('message');
   const [channel, setChannel] = useState<OutreachChannel>('phone');
   const [outcome, setOutcome] = useState<OutreachOutcome>('spoke_with_patient');
   const [outreachNotes, setOutreachNotes] = useState('');
   const [nextActionDate, setNextActionDate] = useState('');
+
+  // Outbound Messaging State
+  const [msgChannel, setMsgChannel] = useState<'sms' | 'email' | 'whatsapp'>('sms');
+  const [templatePreset, setTemplatePreset] = useState<string>(
+    opportunity?.type === 'overdue_recall'
+      ? 'recall'
+      : opportunity?.type === 'pending_balance'
+      ? 'balance'
+      : 'treatment'
+  );
+  const [msgSubject, setMsgSubject] = useState('Dental Care Follow-up - Apex Dental');
+  const [msgBody, setMsgBody] = useState('');
 
   // Resolve Form State
   const [resolutionType, setResolutionType] = useState<ResolutionType>('appointment_booked');
@@ -74,6 +91,85 @@ export function OpportunityDetailDrawer({
   const outreachLogs = opportunity.outreachLogs || [];
   const attributions = opportunity.attributions || [];
   const isClosed = ['converted', 'lost', 'closed'].includes(opportunity.status);
+
+  const getPresetBody = (preset: string) => {
+    const firstName = opportunity.patient?.firstName || 'Valued Patient';
+    const clinic = 'Apex Dental';
+    const treatment = opportunity.treatmentPlan?.title || 'recommended care';
+    const amount = opportunity.estimatedValue
+      ? `$${parseFloat(opportunity.estimatedValue).toFixed(2)}`
+      : 'your balance';
+
+    switch (preset) {
+      case 'recall':
+        return `Hi ${firstName}, this is ${clinic}. You are due for your routine dental cleaning and hygiene checkup. Keeping up with regular cleanings protects your oral health. Please reply to this message or call us to reserve a chair.`;
+      case 'treatment':
+        return `Hi ${firstName}, this is ${clinic} following up regarding your pending treatment plan for ${treatment}. We have convenient appointment openings this week. Please reply or call to schedule.`;
+      case 'balance':
+        return `Hi ${firstName}, this is ${clinic} regarding a pending balance of ${amount}. Please contact our front desk or visit our clinic to review payment options.`;
+      default:
+        return '';
+    }
+  };
+
+  const handlePresetChange = (preset: string) => {
+    setTemplatePreset(preset);
+    if (preset !== 'custom') {
+      setMsgBody(getPresetBody(preset));
+    }
+  };
+
+  // Initialize body if empty
+  if (!msgBody && templatePreset !== 'custom') {
+    setMsgBody(getPresetBody(templatePreset));
+  }
+
+  const currentRecipient =
+    msgChannel === 'email' ? opportunity.patient?.email : opportunity.patient?.phone;
+
+  const handleSendMessageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const effectiveOrgId = organizationId || opportunity.organizationId;
+    if (!effectiveOrgId) {
+      setErrorMsg('Clinic organization context missing');
+      return;
+    }
+    if (!currentRecipient) {
+      setErrorMsg(`Patient does not have a ${msgChannel} address or phone number on file`);
+      return;
+    }
+
+    setErrorMsg(null);
+    setSubmitting(true);
+    try {
+      const sendRes = await sendMessage(effectiveOrgId, {
+        patientId: opportunity.patient?.id,
+        opportunityId: opportunity.id,
+        channel: msgChannel,
+        category: 'operational',
+        recipient: currentRecipient,
+        subject: msgChannel === 'email' ? msgSubject : undefined,
+        body: msgBody,
+      });
+
+      if (!sendRes.success) {
+        throw new Error(sendRes.error?.message || 'Failed to dispatch message');
+      }
+
+      await onLogOutreach({
+        opportunityId: opportunity.id,
+        channel: msgChannel as OutreachChannel,
+        outcome: 'message_sent',
+        notes: `Outbound ${msgChannel.toUpperCase()} sent: "${msgBody.slice(0, 100)}..."`,
+      });
+
+      setActiveTab('timeline');
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to send outbound message');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const handleOutreachSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,41 +309,53 @@ export function OpportunityDetailDrawer({
         </div>
 
         {/* Navigation Tabs */}
-        <div className={styles.tabNav}>
-          <button
-            type="button"
-            className={[styles.tabButton, activeTab === 'timeline' ? styles.activeTab : ''].join(' ')}
-            onClick={() => setActiveTab('timeline')}
-          >
-            Touchpoints ({outreachLogs.length})
-          </button>
-          {!isClosed && (
-            <>
-              <button
-                type="button"
-                className={[styles.tabButton, activeTab === 'outreach' ? styles.activeTab : ''].join(' ')}
-                onClick={() => setActiveTab('outreach')}
-              >
-                Log Outreach
-              </button>
-              <button
-                type="button"
-                className={[styles.tabButton, activeTab === 'resolve' ? styles.activeTab : ''].join(' ')}
-                onClick={() => {
-                  setRecoveredAmount(opportunity.estimatedValue?.toString() || '');
-                  setActiveTab('resolve');
-                }}
-              >
-                Resolve
-              </button>
-              <button
-                type="button"
-                className={[styles.tabButton, activeTab === 'snooze' ? styles.activeTab : ''].join(' ')}
-                onClick={() => setActiveTab('snooze')}
-              >
-                Snooze
-              </button>
-            </>
+        <div className={styles.tabNav} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+            <button
+              type="button"
+              className={[styles.tabButton, activeTab === 'timeline' ? styles.activeTab : ''].join(' ')}
+              onClick={() => setActiveTab('timeline')}
+            >
+              Touchpoints ({outreachLogs.length})
+            </button>
+            {!isClosed && (
+              <>
+                <button
+                  type="button"
+                  className={[styles.tabButton, activeTab === 'outreach' ? styles.activeTab : ''].join(' ')}
+                  onClick={() => setActiveTab('outreach')}
+                >
+                  Log Outreach
+                </button>
+                <button
+                  type="button"
+                  className={[styles.tabButton, activeTab === 'resolve' ? styles.activeTab : ''].join(' ')}
+                  onClick={() => {
+                    setRecoveredAmount(opportunity.estimatedValue?.toString() || '');
+                    setActiveTab('resolve');
+                  }}
+                >
+                  Resolve
+                </button>
+                <button
+                  type="button"
+                  className={[styles.tabButton, activeTab === 'snooze' ? styles.activeTab : ''].join(' ')}
+                  onClick={() => setActiveTab('snooze')}
+                >
+                  Snooze
+                </button>
+              </>
+            )}
+          </div>
+          {!isClosed && organizationId && opportunity.patient?.id && (
+            <DispatchCallDialog
+              organizationId={organizationId}
+              patientId={opportunity.patient.id}
+              patientName={patientName}
+              opportunityId={opportunity.id}
+              defaultProcedure={opportunity.reason}
+              estimatedFee={opportunity.estimatedValue ? parseFloat(opportunity.estimatedValue) : undefined}
+            />
           )}
         </div>
 
@@ -308,66 +416,174 @@ export function OpportunityDetailDrawer({
           </div>
         )}
 
-        {/* Tab 2: Log Outreach Form */}
+        {/* Tab 2: Outreach Form */}
         {activeTab === 'outreach' && (
-          <form onSubmit={handleOutreachSubmit} className={styles.formSection}>
-            <div className={styles.formGroup}>
-              <Select
-                label="Contact Channel"
-                value={channel}
-                onChange={(e) => setChannel(e.target.value as OutreachChannel)}
-                options={OUTREACH_CHANNELS.map((c) => ({
-                  value: c,
-                  label: c.toUpperCase(),
-                }))}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <Select
-                label="Contact Outcome"
-                value={outcome}
-                onChange={(e) => setOutcome(e.target.value as OutreachOutcome)}
-                options={OUTREACH_OUTCOMES.map((o) => ({
-                  value: o,
-                  label: o.replace(/_/g, ' ').toUpperCase(),
-                }))}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <Input
-                label="Next Follow-up Date (Optional)"
-                type="date"
-                value={nextActionDate}
-                onChange={(e) => setNextActionDate(e.target.value)}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.inputLabel}>Interaction Notes</label>
-              <textarea
-                className={styles.textarea}
-                rows={3}
-                placeholder="Details of the conversation, objections raised, or preferred appointment times..."
-                value={outreachNotes}
-                onChange={(e) => setOutreachNotes(e.target.value)}
-              />
-            </div>
-
-            <div className={styles.formActions}>
-              <Button
+          <div className={styles.formSection}>
+            <div className={styles.subTabNav}>
+              <button
                 type="button"
-                variant="ghost"
-                onClick={() => setActiveTab('timeline')}
+                className={[
+                  styles.subTabButton,
+                  outreachMode === 'message' ? styles.activeSubTab : '',
+                ].join(' ')}
+                onClick={() => setOutreachMode('message')}
               >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" disabled={submitting}>
-                {submitting ? 'Saving...' : 'Save Touchpoint'}
-              </Button>
+                ✉️ Send Message (SMS / Email)
+              </button>
+              <button
+                type="button"
+                className={[
+                  styles.subTabButton,
+                  outreachMode === 'log' ? styles.activeSubTab : '',
+                ].join(' ')}
+                onClick={() => setOutreachMode('log')}
+              >
+                📝 Log Call / Note
+              </button>
             </div>
-          </form>
+
+            {outreachMode === 'message' ? (
+              <form onSubmit={handleSendMessageSubmit} className={styles.formSection}>
+                <div className={styles.formGroup}>
+                  <Select
+                    label="Delivery Channel"
+                    value={msgChannel}
+                    onChange={(e) => setMsgChannel(e.target.value as any)}
+                    options={[
+                      { value: 'sms', label: 'SMS Text Message' },
+                      { value: 'email', label: 'Email' },
+                      { value: 'whatsapp', label: 'WhatsApp' },
+                    ]}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>Recipient Address / Number</label>
+                  {currentRecipient ? (
+                    <div className={styles.recipientInfo}>
+                      Delivering to: <strong>{currentRecipient}</strong>
+                    </div>
+                  ) : (
+                    <div className={styles.infoWarning}>
+                      ⚠️ Patient does not have a valid {msgChannel === 'email' ? 'email' : 'phone number'} on file.
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <Select
+                    label="Message Template Preset"
+                    value={templatePreset}
+                    onChange={(e) => handlePresetChange(e.target.value)}
+                    options={[
+                      { value: 'recall', label: 'Routine Hygiene & Cleaning Recall' },
+                      { value: 'treatment', label: 'Unscheduled Treatment Plan Follow-up' },
+                      { value: 'balance', label: 'Outstanding Balance Notice' },
+                      { value: 'custom', label: 'Custom Message' },
+                    ]}
+                  />
+                </div>
+
+                {msgChannel === 'email' && (
+                  <div className={styles.formGroup}>
+                    <Input
+                      label="Email Subject"
+                      value={msgSubject}
+                      onChange={(e) => setMsgSubject(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>Message Content</label>
+                  <textarea
+                    className={styles.textarea}
+                    rows={4}
+                    value={msgBody}
+                    onChange={(e) => setMsgBody(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className={styles.formActions}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setActiveTab('timeline')}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={submitting || !currentRecipient}
+                  >
+                    {submitting ? 'Sending...' : 'Send Message & Log Touchpoint'}
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleOutreachSubmit} className={styles.formSection}>
+                <div className={styles.formGroup}>
+                  <Select
+                    label="Contact Channel"
+                    value={channel}
+                    onChange={(e) => setChannel(e.target.value as OutreachChannel)}
+                    options={OUTREACH_CHANNELS.map((c) => ({
+                      value: c,
+                      label: c.toUpperCase(),
+                    }))}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <Select
+                    label="Contact Outcome"
+                    value={outcome}
+                    onChange={(e) => setOutcome(e.target.value as OutreachOutcome)}
+                    options={OUTREACH_OUTCOMES.map((o) => ({
+                      value: o,
+                      label: o.replace(/_/g, ' ').toUpperCase(),
+                    }))}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <Input
+                    label="Next Follow-up Date (Optional)"
+                    type="date"
+                    value={nextActionDate}
+                    onChange={(e) => setNextActionDate(e.target.value)}
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label className={styles.inputLabel}>Interaction Notes</label>
+                  <textarea
+                    className={styles.textarea}
+                    rows={3}
+                    placeholder="Details of the conversation, objections raised, or preferred appointment times..."
+                    value={outreachNotes}
+                    onChange={(e) => setOutreachNotes(e.target.value)}
+                  />
+                </div>
+
+                <div className={styles.formActions}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setActiveTab('timeline')}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="primary" disabled={submitting}>
+                    {submitting ? 'Saving...' : 'Save Touchpoint'}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
         )}
 
         {/* Tab 3: Resolve Form */}

@@ -1,7 +1,8 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { db } from '@dental/db';
-import { memberships, locations, organizations } from '@dental/db';
+import { memberships, locations, organizations, subscriptions } from '@dental/db';
 import { eq } from 'drizzle-orm';
 import styles from './settings.module.css';
 import { AddLocationForm } from './add-location-form';
@@ -38,10 +39,12 @@ export default async function SettingsPage() {
   const org = membership.organization;
 
   // Fetch all locations for this organization
-  const orgLocations = await db
-    .select()
-    .from(locations)
-    .where(eq(locations.organizationId, org.id));
+  const [orgLocations, currentSubscription] = await Promise.all([
+    db.select().from(locations).where(eq(locations.organizationId, org.id)),
+    db.query.subscriptions.findFirst({
+      where: eq(subscriptions.organizationId, org.id),
+    }),
+  ]);
 
   const rolePermissionsList = membership.role?.rolePermissions.map(
     (rp) => rp.permission
@@ -52,9 +55,52 @@ export default async function SettingsPage() {
       <header className={styles.header}>
         <h1 className={styles.title}>Clinic Settings</h1>
         <p className={styles.subtitle}>
-          Manage organization details, physical locations, and view your permissions.
+          Manage organization details, physical locations, commercial subscription, and security permissions.
         </p>
       </header>
+
+      {/* Subscription & Commercial Licensing */}
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h2 className={styles.sectionTitle}>Subscription & Licensing</h2>
+            <p className={styles.subtitle}>
+              Manage commercial tier, chair quotas, multi-location licensing, and invoices.
+            </p>
+          </div>
+          <Link href="/settings/subscription" className={styles.manageButton}>
+            Manage Plan & Billing →
+          </Link>
+        </div>
+        <div className={styles.grid}>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Current Plan</span>
+            <span className={styles.fieldValue} style={{ textTransform: 'capitalize' }}>
+              {currentSubscription?.plan || 'Growth'} Tier
+            </span>
+          </div>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Subscription Status</span>
+            <div>
+              <span className={styles.badge}>
+                {currentSubscription?.status || 'Active'}
+              </span>
+            </div>
+          </div>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Physical Locations</span>
+            <span className={styles.fieldValue}>
+              {orgLocations.length} registered (Max: {currentSubscription?.maxLocations === -1 ? 'Unlimited' : (currentSubscription?.maxLocations || 3)})
+            </span>
+          </div>
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Compliance & Data Privacy</span>
+            <span className={styles.fieldValue} style={{ color: 'var(--color-primary)' }}>
+              GDPR & HIPAA Portability
+            </span>
+          </div>
+        </div>
+      </section>
 
       {/* Organization Information */}
       <section className={styles.section}>
