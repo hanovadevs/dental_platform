@@ -25,61 +25,73 @@ export default async function LandingPage() {
       {/* 2. Hero Section */}
       <section className={styles.hero}>
         <div className={styles.container}>
-          <div className={styles.heroContent}>
-            <div className={styles.eyebrow}>Practice Operating System + Revenue Intelligence</div>
-            <h1 className={styles.heroTitle}>
-              A Smarter Operating System for Modern Dental Clinics
-            </h1>
-            <p className={styles.heroSubtitle}>
-              Manage appointments, patients, clinical charting, billing, recalls, and revenue opportunities in one premium platform built for dentists.
-            </p>
+          <div className={styles.heroGrid}>
+            <div className={styles.heroLeft}>
+              <h1 className={styles.heroTitle}>
+                The Modern Operating System for Dental Practices
+              </h1>
+              <p className={styles.heroSubtitle}>
+                Streamline appointments, FDI clinical charting, treatment plans, billing, and automated patient recall recovery in one unified platform.
+              </p>
 
-            <div className={styles.heroCtaGroup}>
-              <Link href="/register" className={styles.primaryCta}>
-                Register Your Dental Clinic Now
-              </Link>
-              <Link href="/login" className={styles.secondaryCta}>
-                Login to Your Clinic
-              </Link>
+              <div className={styles.heroCtaGroup}>
+                <Link href="/register" className={styles.primaryCta}>
+                  Register Your Clinic
+                </Link>
+                <Link href="/login" className={styles.secondaryCta}>
+                  Login to Clinic
+                </Link>
+              </div>
+
+              <div className={styles.heroFeatureList}>
+                <span className={styles.heroFeatureItem}>
+                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Multi-Chair Scheduling
+                </span>
+                <span className={styles.heroFeatureItem}>
+                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  FDI Dental Charting
+                </span>
+                <span className={styles.heroFeatureItem}>
+                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Automated Recalls
+                </span>
+                <span className={styles.heroFeatureItem}>
+                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  100% Cloud-Native
+                </span>
+              </div>
             </div>
 
-            <div className={styles.trustLine}>
-              Built for modern dental practices • 100% cloud-based • Eliminates revenue leakage
-            </div>
+            <div className={styles.heroRight}>
+              <div className={styles.heroImageFrame}>
+                <img 
+                  src="/hero-bg.jpg" 
+                  alt="Modern Dental Clinic Operatory" 
+                  className={styles.heroImageVisual}
+                />
+                <div className={styles.heroImageOverlay}>
+                  <div className={styles.heroStatusBadge}>
+                    <span className={styles.statusDotPulse} />
+                    <span>Live Clinic Operations</span>
+                  </div>
 
-            {/* Floating Hero UI Preview */}
-            <div className={styles.heroMockupContainer}>
-              <div className={styles.heroMockupCard}>
-                <div className={styles.heroMockupHeader}>
-                  <div>
-                    <span className={styles.heroMockupTitle}>Live Practice Overview</span>
-                    <span className={styles.heroMockupSub}> — Real-time clinic pulse and automated opportunity tracking</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#166534', background: '#dcfce7', padding: '4px 10px', borderRadius: '20px' }}>
-                      3 Operatories Active
-                    </span>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#0369a1', background: '#e0f2fe', padding: '4px 10px', borderRadius: '20px' }}>
-                      Recovery Engine Online
-                    </span>
-                  </div>
-                </div>
-
-                <div className={styles.heroMockupGrid}>
-                  <div className={styles.heroMiniStat}>
-                    <span className={styles.heroMiniLabel}>Today&apos;s Appointments</span>
-                    <span className={styles.heroMiniVal}>18 Patients</span>
-                    <span className={styles.heroMiniFoot}>4 in chair • 0 unscheduled gaps</span>
-                  </div>
-                  <div className={styles.heroMiniStat}>
-                    <span className={styles.heroMiniLabel}>Unaccepted Care Pipeline</span>
-                    <span className={styles.heroMiniVal}>$42,850</span>
-                    <span className={styles.heroMiniFoot}>24 high-priority treatment plans</span>
-                  </div>
-                  <div className={styles.heroMiniStat}>
-                    <span className={styles.heroMiniLabel}>Recovered This Month</span>
-                    <span className={styles.heroMiniVal}>$18,420</span>
-                    <span className={styles.heroMiniFoot}>+22.4% via automated recall outreach</span>
+                  <div className={styles.heroGlassCard}>
+                    <div className={styles.heroCardRow}>
+                      <div>
+                        <div className={styles.cardMiniLabel}>Active Operatories</div>
+                        <div className={styles.cardMiniVal}>3 Chairs in Service</div>
+                      </div>
+                      <div>
+                        <div className={styles.cardMiniLabel}>Today&apos;s Appointments</div>
+                        <div className={styles.cardMiniVal}>18 Patients</div>
+                      </div>
+                    </div>
+                    <div className={styles.cardDivider} />
+                    <div className={styles.heroCardFooter}>
+                      <span className={styles.cardFootLabel}>Automated Care Recovery</span>
+                      <span className={styles.cardFootVal}>+$18,420 / mo</span>
+                    </div>
                   </div>
                 </div>
               </div>

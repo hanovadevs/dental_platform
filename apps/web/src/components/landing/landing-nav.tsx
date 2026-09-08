@@ -21,13 +21,10 @@ export function LandingNav({ isAuthenticated }: LandingNavProps) {
   }, []);
 
   const navLinks = [
-    { label: 'Platform', href: '#overview' },
+    { label: 'Overview', href: '#overview' },
     { label: 'Modules', href: '#modules' },
-    { label: 'Scheduling', href: '#scheduling' },
-    { label: 'Dental Charting', href: '#charting' },
-    { label: 'Revenue Engine', href: '#revenue' },
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Showcase', href: '#showcase' },
+    { label: 'Clinical Flow', href: '#charting' },
+    { label: 'Live Demo', href: '#showcase' },
     { label: 'FAQ', href: '#faq' },
     { label: 'Contact', href: '#contact' },
   ];
@@ -35,17 +32,13 @@ export function LandingNav({ isAuthenticated }: LandingNavProps) {
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
       <div className={styles.container}>
-        {/* Brand Identity */}
         <Link href="/" className={styles.brand} aria-label="Dental OS Home">
           <img
             src="/logo.png"
             alt="Dental OS Logo"
             className={styles.logoImg}
           />
-          <div className={styles.brandText}>
-            <span className={styles.brandTitle}>Dental OS</span>
-            <span className={styles.brandSubtitle}>Practice & Revenue Intelligence</span>
-          </div>
+          <span className={styles.brandTitle}>Dental OS</span>
         </Link>
 
         {/* Desktop Navigation Links */}

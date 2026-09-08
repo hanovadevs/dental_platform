@@ -37,8 +37,8 @@
 }
 
 .logoImg {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.2));
   transition: transform 0.2s ease;
@@ -48,24 +48,12 @@
   transform: scale(1.04);
 }
 
-.brandText {
-  display: flex;
-  flex-direction: column;
-}
-
 .brandTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
   color: #0f172a;
   line-height: 1.2;
-}
-
-.brandSubtitle {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: #64748b;
-  letter-spacing: -0.01em;
 }
 
 .desktopNav {
