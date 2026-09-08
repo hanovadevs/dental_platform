@@ -25,76 +25,40 @@ export default async function LandingPage() {
       {/* 2. Hero Section */}
       <section className={styles.hero}>
         <div className={styles.container}>
-          <div className={styles.heroGrid}>
-            <div className={styles.heroLeft}>
-              <h1 className={styles.heroTitle}>
-                The Modern Operating System for Dental Practices
-              </h1>
-              <p className={styles.heroSubtitle}>
-                Streamline appointments, FDI clinical charting, treatment plans, billing, and automated patient recall recovery in one unified platform.
-              </p>
+          <div className={styles.heroContent}>
+            <h1 className={styles.heroTitle}>
+              The Modern Operating System for Dental Practices
+            </h1>
+            <p className={styles.heroSubtitle}>
+              Streamline appointments, FDI clinical charting, treatment plans, billing, and automated patient recall recovery in one unified platform.
+            </p>
 
-              <div className={styles.heroCtaGroup}>
-                <Link href="/register" className={styles.primaryCta}>
-                  Register Your Clinic
-                </Link>
-                <Link href="/login" className={styles.secondaryCta}>
-                  Login to Clinic
-                </Link>
-              </div>
-
-              <div className={styles.heroFeatureList}>
-                <span className={styles.heroFeatureItem}>
-                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  Multi-Chair Scheduling
-                </span>
-                <span className={styles.heroFeatureItem}>
-                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  FDI Dental Charting
-                </span>
-                <span className={styles.heroFeatureItem}>
-                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  Automated Recalls
-                </span>
-                <span className={styles.heroFeatureItem}>
-                  <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  100% Cloud-Native
-                </span>
-              </div>
+            <div className={styles.heroCtaGroup}>
+              <Link href="/register" className={styles.primaryCta}>
+                Register Your Clinic
+              </Link>
+              <Link href="/login" className={styles.secondaryCta}>
+                Login to Clinic
+              </Link>
             </div>
 
-            <div className={styles.heroRight}>
-              <div className={styles.heroImageFrame}>
-                <img 
-                  src="/hero-bg.jpg" 
-                  alt="Modern Dental Clinic Operatory" 
-                  className={styles.heroImageVisual}
-                />
-                <div className={styles.heroImageOverlay}>
-                  <div className={styles.heroStatusBadge}>
-                    <span className={styles.statusDotPulse} />
-                    <span>Live Clinic Operations</span>
-                  </div>
-
-                  <div className={styles.heroGlassCard}>
-                    <div className={styles.heroCardRow}>
-                      <div>
-                        <div className={styles.cardMiniLabel}>Active Operatories</div>
-                        <div className={styles.cardMiniVal}>3 Chairs in Service</div>
-                      </div>
-                      <div>
-                        <div className={styles.cardMiniLabel}>Today&apos;s Appointments</div>
-                        <div className={styles.cardMiniVal}>18 Patients</div>
-                      </div>
-                    </div>
-                    <div className={styles.cardDivider} />
-                    <div className={styles.heroCardFooter}>
-                      <span className={styles.cardFootLabel}>Automated Care Recovery</span>
-                      <span className={styles.cardFootVal}>+$18,420 / mo</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className={styles.heroFeatureList}>
+              <span className={styles.heroFeatureItem}>
+                <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Multi-Chair Scheduling
+              </span>
+              <span className={styles.heroFeatureItem}>
+                <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                FDI Dental Charting
+              </span>
+              <span className={styles.heroFeatureItem}>
+                <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Automated Recalls
+              </span>
+              <span className={styles.heroFeatureItem}>
+                <svg className={styles.checkIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                100% Cloud-Native
+              </span>
             </div>
           </div>
         </div>
