@@ -8,11 +8,8 @@ import styles from './page.module.css';
  * - Asymmetric layout, not a grid of equal cards
  * - Shows: today's clinic state, revenue opportunities, required actions, monthly trend
  * - "Good morning, Dr. Ahmed" style greeting
- *
- * Phase 0: Shows greeting and clinic pulse placeholder.
- * Full dashboard built in later phases when real data exists.
  */
-export default async function HomePage() {
+export default async function DashboardPage() {
   const session = await auth();
 
   if (!session?.user) {

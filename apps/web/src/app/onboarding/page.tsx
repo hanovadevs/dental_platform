@@ -33,7 +33,7 @@ export default function OnboardingPage() {
       const result = await createOrganization(formData);
 
       if (result.success) {
-        router.push('/');
+        router.push('/dashboard');
         router.refresh();
       } else {
         setError(result.error?.message ?? 'Failed to create clinic.');

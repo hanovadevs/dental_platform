@@ -9,8 +9,8 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
 
   // Public routes that don't require auth
-  const publicPaths = ['/login', '/register', '/api/auth'];
-  const isPublic = publicPaths.some((path) => pathname.startsWith(path));
+  const publicPaths = ['/login', '/register', '/api/auth', '/api/contact', '/confirm'];
+  const isPublic = pathname === '/' || publicPaths.some((path) => pathname.startsWith(path));
 
   if (isPublic) {
     return NextResponse.next();
@@ -27,5 +27,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/auth).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.png|logo.png|apple-icon.png|hero-bg.jpg|api/auth).*)'],
 };

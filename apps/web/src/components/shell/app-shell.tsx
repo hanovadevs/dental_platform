@@ -25,7 +25,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Home', href: '/', segment: '' },
+  { label: 'Dashboard', href: '/dashboard', segment: 'dashboard' },
   { label: 'Calendar', href: '/calendar', segment: 'calendar' },
   { label: 'Patients', href: '/patients', segment: 'patients' },
   { label: 'Treatments', href: '/treatments', segment: 'treatments' },
@@ -69,7 +69,7 @@ export function AppShell({ children, userName, clinicName }: AppShellProps) {
       {/* Navigation Rail */}
       <nav className={styles.rail} aria-label="Primary navigation">
         <div className={styles.railTop}>
-          <Link href="/" className={styles.logo} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '10px 4px', textAlign: 'center' }}>
+          <Link href="/dashboard" className={styles.logo} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '10px 4px', textAlign: 'center' }}>
             <img
               src="/logo.png"
               alt="Dental OS Logo"

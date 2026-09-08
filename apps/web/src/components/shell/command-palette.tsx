@@ -27,10 +27,10 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     () => [
       // Navigation
       {
-        id: 'nav-home',
-        title: 'Go to Home',
+        id: 'nav-dashboard',
+        title: 'Go to Dashboard',
         category: 'Navigation',
-        perform: () => router.push('/'),
+        perform: () => router.push('/dashboard'),
       },
       {
         id: 'nav-calendar',
