@@ -12,6 +12,7 @@ import bcrypt from 'bcryptjs';
  */
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
+  secret: process.env.AUTH_SECRET || 'dental-os-fallback-jwt-auth-secret-production-key-32-chars-min',
   providers: [
     Credentials({
       name: 'credentials',

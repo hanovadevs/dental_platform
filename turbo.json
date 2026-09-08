@@ -3,6 +3,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "AUTH_SECRET",
+        "AUTH_URL",
+        "AUTH_TRUST_HOST",
+        "NODE_ENV",
+        "DB_MAX_CONNECTIONS",
+        "DB_PREPARE"
+      ],
       "outputs": [".next/**", "dist/**"]
     },
     "dev": {
