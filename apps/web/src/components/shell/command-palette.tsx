@@ -75,6 +75,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         perform: () => router.push('/reports'),
       },
       {
+        id: 'nav-communications',
+        title: 'Go to Communications & Messaging',
+        category: 'Navigation',
+        perform: () => router.push('/communications'),
+      },
+      {
         id: 'nav-settings',
         title: 'Go to Settings',
         category: 'Navigation',

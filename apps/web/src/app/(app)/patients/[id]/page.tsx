@@ -15,6 +15,8 @@ import {
   appointments,
   revenueOpportunities,
   recalls,
+  communications,
+  communicationConsents,
 } from '@dental/db';
 import { eq, and, desc, inArray } from 'drizzle-orm';
 import styles from './patient-profile.module.css';
@@ -226,6 +228,25 @@ export default async function PatientProfilePage({
       invoices: [],
       payments: [],
     };
+  } else if (tab === 'communications') {
+    patientCommunicationsData = await db.query.communications.findMany({
+      where: and(
+        eq(communications.patientId, patientId),
+        eq(communications.organizationId, organizationId)
+      ),
+      with: {
+        sender: true,
+        template: true,
+      },
+      orderBy: [desc(communications.createdAt)],
+    });
+
+    patientConsentsData = await db.query.communicationConsents.findMany({
+      where: and(
+        eq(communicationConsents.patientId, patientId),
+        eq(communicationConsents.organizationId, organizationId)
+      ),
+    });
   }
 
   const getStatusVariant = (status: string) => {
@@ -343,6 +364,12 @@ export default async function PatientProfilePage({
           className={[styles.tab, tab === 'billing' ? styles.tabActive : ''].join(' ')}
         >
           Billing
+        </Link>
+        <Link
+          href={`/patients/${patientId}?tab=communications`}
+          className={[styles.tab, tab === 'communications' ? styles.tabActive : ''].join(' ')}
+        >
+          Communications
         </Link>
       </nav>
 
@@ -733,6 +760,76 @@ export default async function PatientProfilePage({
           financialSummary={financialSummaryData}
           locations={orgLocations}
         />
+      )}
+
+      {/* Tab Content: Communications View */}
+      {tab === 'communications' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <section className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitle}>Communication Preferences & Consent</h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)' }}>
+              {['sms', 'email', 'whatsapp'].map((ch) => {
+                const optOut = patientConsentsData.find((c) => c.channel === ch && !c.consented);
+                return (
+                  <div key={ch} style={{ padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px', backgroundColor: 'var(--color-surface-subtle)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <strong style={{ textTransform: 'uppercase', fontSize: 'var(--text-xs)' }}>{ch}</strong>
+                      <Badge variant={optOut ? 'danger' : 'success'} size="sm">
+                        {optOut ? 'OPTED OUT' : 'CONSENTED'}
+                      </Badge>
+                    </div>
+                    <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginTop: '4px' }}>
+                      {optOut ? 'No outbound messages allowed' : 'Operational & reminders active'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 className={styles.cardTitle}>Message History ({patientCommunicationsData.length})</h2>
+              <Link href={`/communications`} style={{ fontSize: 'var(--text-xs)', color: 'var(--color-primary)' }}>
+                Open Messaging Center &rarr;
+              </Link>
+            </div>
+
+            {patientCommunicationsData.length === 0 ? (
+              <p className={styles.listItemMeta}>No messages recorded for this patient.</p>
+            ) : (
+              <div className={styles.listGroup}>
+                {patientCommunicationsData.map((comm) => (
+                  <div key={comm.id} className={styles.listItem}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 6px', backgroundColor: '#f1f5f9', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
+                          {comm.channel.toUpperCase()}
+                        </span>
+                        <Badge variant={comm.status === 'delivered' ? 'success' : comm.status === 'failed' ? 'danger' : 'info'} size="sm">
+                          {comm.status.toUpperCase()}
+                        </Badge>
+                        <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}>
+                          {new Date(comm.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      {comm.subject && (
+                        <div style={{ fontSize: 'var(--text-xs)', fontWeight: 600, marginBottom: '2px' }}>
+                          Subject: {comm.subject}
+                        </div>
+                      )}
+                      <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap' }}>
+                        {comm.body}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       )}
     </div>
   );
