@@ -1,0 +1,110 @@
+/**
+ * Design tokens for Dental Revenue OS.
+ * Per spec (06_UI_UX_DESIGN_SYSTEM.md).
+ *
+ * Light-theme premium liquid glass with restrained transparency,
+ * soft depth, strong typography, and extremely clear navigation.
+ *
+ * These CSS custom properties are the single source of truth for all styling.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* --- Color System (Section 4) --- */
+  /* Neutral clinical foundation */
+  --color-canvas: #f8f9fb;
+  --color-surface: #ffffff;
+  --color-raised: rgba(255, 255, 255, 0.72);
+
+  --color-text-primary: #0f1419;
+  --color-text-secondary: #536471;
+  --color-text-muted: #8899a6;
+  --color-text-inverse: #ffffff;
+
+  /* Restrained brand accent */
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-light: rgba(37, 99, 235, 0.08);
+  --color-accent-border: rgba(37, 99, 235, 0.2);
+
+  /* Semantic colors — muted per spec */
+  --color-success: #16a34a;
+  --color-success-light: rgba(22, 163, 74, 0.08);
+  --color-warning: #d97706;
+  --color-warning-light: rgba(217, 119, 6, 0.08);
+  --color-danger: #dc2626;
+  --color-danger-light: rgba(220, 38, 38, 0.08);
+  --color-info: #2563eb;
+  --color-info-light: rgba(37, 99, 235, 0.08);
+
+  /* Borders and dividers */
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.14);
+  --color-divider: rgba(0, 0, 0, 0.06);
+
+  /* --- Glass Material (Section 5) --- */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-blur: blur(20px) saturate(140%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.7);
+  --glass-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 12px 36px rgba(0, 0, 0, 0.06);
+
+  /* --- Corner Radius (Section 6) --- */
+  --radius-sm: 10px;
+  --radius-input: 12px;
+  --radius-card: 16px;
+  --radius-glass: 20px;
+  --radius-modal: 22px;
+  --radius-full: 9999px;
+
+  /* --- Typography (Section 7) --- */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  --text-page-title: 600 1.75rem/2.25rem var(--font-family);    /* 28px */
+  --text-section-title: 600 1.25rem/1.75rem var(--font-family);  /* 20px */
+  --text-card-title: 500 1rem/1.5rem var(--font-family);          /* 16px */
+  --text-body: 400 0.9375rem/1.5rem var(--font-family);           /* 15px */
+  --text-meta: 500 0.8125rem/1.125rem var(--font-family);         /* 13px */
+  --text-table: 400 0.875rem/1.25rem var(--font-family);          /* 14px */
+  --text-label: 500 0.875rem/1.25rem var(--font-family);          /* 14px */
+
+  /* --- Spacing (Section 8) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-glass: var(--glass-shadow);
+
+  /* --- Motion (Section 12) --- */
+  --motion-fast: 150ms ease;
+  --motion-normal: 200ms ease;
+  --motion-slow: 280ms ease;
+
+  /* --- Layout --- */
+  --nav-width: 220px;
+  --nav-width-collapsed: 64px;
+  --header-height: 56px;
+  --content-max-width: 1400px;
+}
+
+/* --- Reduced motion support (Section 26) --- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-normal: 0ms;
+    --motion-slow: 0ms;
+  }
+}

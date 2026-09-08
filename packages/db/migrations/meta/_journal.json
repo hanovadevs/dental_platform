@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788786248869,
+      "tag": "0000_eminent_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788787488688,
+      "tag": "0001_sour_albert_cleary",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788788196019,
+      "tag": "0002_dark_dexter_bennett",
+      "breakpoints": true
+    }
+  ]
+}

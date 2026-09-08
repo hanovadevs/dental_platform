@@ -1,0 +1,105 @@
+@import './tokens.css';
+
+/**
+ * Global styles for Dental Revenue OS.
+ * Minimal resets and base styling — components handle their own specifics.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-family);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  min-height: 100dvh;
+}
+
+/* --- Focus states (Section 26) --- */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Links --- */
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* --- Scrollbar (subtle) --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Selection --- */
+::selection {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+/* --- Utility classes --- */
+.glass-surface {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-glass);
+}
+
+.text-page-title {
+  font: var(--text-page-title);
+  color: var(--color-text-primary);
+}
+
+.text-section-title {
+  font: var(--text-section-title);
+  color: var(--color-text-primary);
+}
+
+.text-body {
+  font: var(--text-body);
+  color: var(--color-text-primary);
+}
+
+.text-meta {
+  font: var(--text-meta);
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}

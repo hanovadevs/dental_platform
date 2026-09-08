@@ -1,0 +1,221 @@
+/**
+ * Application shell styles.
+ * Per spec (06_UI_UX_DESIGN_SYSTEM.md):
+ * - Slim left navigation rail with glass material
+ * - Main workspace with near-white canvas
+ * - No excessive borders, shadows, or decorative elements
+ * - Responsive: rail collapses on mobile
+ */
+
+.shell {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--color-canvas);
+}
+
+/* --- Navigation Rail --- */
+
+.rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--nav-width);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5) var(--space-3);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-right: 1px solid var(--color-divider);
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.railTop {
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-divider);
+  margin-bottom: var(--space-4);
+}
+
+.logo {
+  font: var(--text-card-title);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  display: block;
+}
+
+.logo:hover {
+  text-decoration: none;
+}
+
+.searchTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font: var(--text-body);
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--motion-fast);
+}
+
+.searchTrigger:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-text-primary);
+}
+
+.searchKbd {
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  padding: 1px var(--space-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.navItem {
+  display: block;
+  font: var(--text-body);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: all var(--motion-fast);
+  cursor: pointer;
+}
+
+.navItem:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.navItemActive {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.navItemActive:hover {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+.railBottom {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-divider);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.userInfo {
+  padding: var(--space-2) var(--space-3);
+}
+
+.userName {
+  font: var(--text-meta);
+  color: var(--color-text-muted);
+}
+
+/* --- Main Workspace --- */
+
+.workspace {
+  flex: 1;
+  margin-left: var(--nav-width);
+  padding: var(--space-8);
+  max-width: var(--content-max-width);
+  width: 100%;
+}
+
+/* --- Responsive --- */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .rail {
+    width: var(--nav-width-collapsed);
+    padding: var(--space-3) var(--space-2);
+  }
+
+  .logo {
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .workspace {
+    margin-left: var(--nav-width-collapsed);
+    padding: var(--space-6);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .shell {
+    flex-direction: column;
+  }
+
+  .rail {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    padding: var(--space-2) var(--space-3);
+    border-right: none;
+    border-top: 1px solid var(--color-divider);
+    overflow-x: auto;
+    overflow-y: hidden;
+    z-index: 100;
+  }
+
+  .railTop {
+    display: none;
+  }
+
+  .railBottom {
+    display: none;
+  }
+
+  .navList {
+    flex-direction: row;
+    gap: 0;
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .navItem {
+    font-size: 0.75rem;
+    padding: var(--space-2);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .workspace {
+    margin-left: 0;
+    margin-bottom: 56px;
+    padding: var(--space-4);
+  }
+}

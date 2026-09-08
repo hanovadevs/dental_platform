@@ -1,0 +1,36 @@
+.dashboard {
+  max-width: 900px;
+}
+
+.greeting {
+  margin-bottom: var(--space-10);
+}
+
+.greetingText {
+  font: var(--text-page-title);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.date {
+  font: var(--text-body);
+  color: var(--color-text-secondary);
+}
+
+.sectionTitle {
+  font: var(--text-section-title);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.pulse {
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--color-divider);
+}
+
+.emptyNote {
+  font: var(--text-body);
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,48 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--color-canvas);
+  padding: var(--space-6);
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.header {
+  margin-bottom: var(--space-8);
+}
+
+.title {
+  font: var(--text-page-title);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font: var(--text-body);
+  color: var(--color-text-secondary);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-divider);
+  margin: var(--space-2) 0;
+}
+
+.errorBanner {
+  font: var(--text-meta);
+  color: var(--color-danger);
+  background: var(--color-danger-light);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+}

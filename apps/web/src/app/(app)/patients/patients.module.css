@@ -1,0 +1,146 @@
+.container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font: var(--text-page-title);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font: var(--text-body);
+  color: var(--color-text-secondary);
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.subnav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-6);
+  overflow-x: auto;
+}
+
+.subnavLink {
+  font: var(--text-body);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all var(--motion-fast);
+  white-space: nowrap;
+}
+
+.subnavLink:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.subnavLinkActive {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
+}
+
+.searchBar {
+  margin-bottom: var(--space-6);
+  max-width: 480px;
+}
+
+.tableCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--text-body);
+  text-align: left;
+}
+
+.table th {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-canvas);
+  font: var(--text-label);
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-divider);
+  font-size: 0.8125rem;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+  color: var(--color-text-primary);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.patientLink {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.patientLink:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.patientNumber {
+  font-family: monospace;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.metaText {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.alertTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: var(--space-2);
+}
