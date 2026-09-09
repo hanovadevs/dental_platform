@@ -49,7 +49,6 @@ export default async function LandingPage() {
       <section className={styles.section} id="overview">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>Unified Architecture</div>
             <h2 className={styles.sectionTitle}>One Platform. Every Clinical & Revenue Workflow.</h2>
             <p className={styles.sectionSubtitle}>
               Dental OS replaces fragmented software with an intentional, cohesive operating system engineered specifically for dental workflows.
@@ -149,7 +148,6 @@ export default async function LandingPage() {
         <div className={styles.container}>
           <div className={styles.featureGrid}>
             <div className={styles.featureTextCol}>
-              <div className={styles.eyebrow}>Operational Velocity</div>
               <h2 className={styles.featureTitle}>Fast, Multi-Chair Operatory Scheduling</h2>
               <p className={styles.featureParagraph}>
                 Your reception desk is the command center of clinic revenue. Dental OS replaces slow, clunky calendar software with a rapid operatory timeline that eliminates scheduling gaps.
@@ -249,7 +247,6 @@ export default async function LandingPage() {
             </div>
 
             <div className={styles.featureTextCol}>
-              <div className={styles.eyebrow}>High-Precision Clinical Care</div>
               <h2 className={styles.featureTitle}>Interactive FDI Dental Charting & Electronic Records</h2>
               <p className={styles.featureParagraph}>
                 Clinicians need software that gets out of their way. Chart conditions at tooth-level with precise surface mapping, visual condition indicators, and medical history integration.
@@ -282,7 +279,6 @@ export default async function LandingPage() {
         <div className={styles.container}>
           <div className={styles.featureGrid}>
             <div className={styles.featureTextCol}>
-              <div className={styles.eyebrow}>Financial Transparency</div>
               <h2 className={styles.featureTitle}>Clear Treatment Acceptance & Modern Invoicing</h2>
               <p className={styles.featureParagraph}>
                 Patients accept treatment when fees are transparent and easy to understand. Dental OS produces itemized, phased treatment proposals that convert diagnoses into accepted care.
@@ -376,7 +372,6 @@ export default async function LandingPage() {
             </div>
 
             <div className={styles.featureTextCol}>
-              <div className={styles.eyebrow}>The Core Differentiator</div>
               <h2 className={styles.featureTitle}>The Autonomous Revenue Recovery Engine</h2>
               <p className={styles.featureParagraph}>
                 This is what sets Dental OS apart from all generic dental management tools. The platform runs a continuous intelligence engine that hunts for leaked revenue and presents high-probability recovery actions.
@@ -429,7 +424,6 @@ export default async function LandingPage() {
         <div className={styles.container}>
           <div className={styles.featureGrid}>
             <div className={styles.featureTextCol}>
-              <div className={styles.eyebrow}>Patient Retention</div>
               <h2 className={styles.featureTitle}>Omnichannel Recalls & Voice Calling Interface</h2>
               <p className={styles.featureParagraph}>
                 Keep patients connected to their treatment plans through coordinated automated outreach that respects clinical boundaries and communication regulations.
@@ -487,7 +481,6 @@ export default async function LandingPage() {
       <section className={styles.sectionAlt} id="how-it-works">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>Rapid Adoption</div>
             <h2 className={styles.sectionTitle}>Up and Running in Under 15 Minutes</h2>
             <p className={styles.sectionSubtitle}>
               A clinic should not need an IT technician. Setting up your practice in Dental OS is fast, intuitive, and completely self-guided.
@@ -534,7 +527,6 @@ export default async function LandingPage() {
       <section className={styles.section} id="showcase">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>Live Product Walkthrough</div>
             <h2 className={styles.sectionTitle}>Experience the Dental OS Workspace</h2>
             <p className={styles.sectionSubtitle}>
               Explore the actual interfaces built for doctors and clinic receptionists. Click any tab below to inspect live simulated views.
@@ -549,7 +541,6 @@ export default async function LandingPage() {
       <section className={styles.sectionAlt}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>The Modern Standard</div>
             <h2 className={styles.sectionTitle}>Why Leading Practices Choose Dental OS</h2>
             <p className={styles.sectionSubtitle}>
               See how an integrated practice operating system outperforms fragmented software and legacy on-premise tools.
@@ -606,7 +597,6 @@ export default async function LandingPage() {
       <section className={styles.section} id="faq">
         <div className={styles.containerNarrow}>
           <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>Answers for Practices</div>
             <h2 className={styles.sectionTitle}>Frequently Asked Questions</h2>
             <p className={styles.sectionSubtitle}>
               Everything you need to know about adopting Dental OS in your practice.
@@ -621,7 +611,6 @@ export default async function LandingPage() {
       <section className={styles.sectionAlt} id="contact">
         <div className={styles.containerNarrow}>
           <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>Connect with Specialists</div>
             <h2 className={styles.sectionTitle}>Request a Practice Consultation</h2>
             <p className={styles.sectionSubtitle}>
               Have questions about multi-location support, data migration, or custom clinical workflows? Send our dental practice specialists an inquiry below.
@@ -636,7 +625,6 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <div className={styles.container}>
           <div className={styles.finalCtaBox}>
-            <div className={styles.eyebrow}>Modernize Today</div>
             <h2 className={styles.finalCtaTitle}>
               Transform your clinic operations. Stop losing patients and revenue.
             </h2>
