@@ -45,71 +45,8 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* 3. Problem Section */}
-      <section className={styles.sectionAlt} id="overview">
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.eyebrow}>The Practice Reality</div>
-            <h2 className={styles.sectionTitle}>The Silent Revenue Leakage in Dental Practices</h2>
-            <p className={styles.sectionSubtitle}>
-              Most clinics lose tens of thousands of dollars each month not from a lack of skill, but from broken administrative workflows and disconnected tools.
-            </p>
-          </div>
-
-          <div className={styles.problemGrid}>
-            <div className={styles.problemCard}>
-              <span className={styles.problemIndex}>Friction Point 01</span>
-              <h3 className={styles.problemTitle}>Unaccepted Treatment Plans</h3>
-              <p className={styles.problemDesc}>
-                High-value crowns, bridges, and implants are diagnosed in the operatory, but patients leave the front desk without booking. These plans sit forgotten in paper charts or legacy software.
-              </p>
-            </div>
-
-            <div className={styles.problemCard}>
-              <span className={styles.problemIndex}>Friction Point 02</span>
-              <h3 className={styles.problemTitle}>6-Month Hygiene Drop-Offs</h3>
-              <p className={styles.problemDesc}>
-                Up to 35% of hygiene recall patients never schedule their next appointment. Staff are too occupied with daily check-ins to manually phone hundreds of overdue patients.
-              </p>
-            </div>
-
-            <div className={styles.problemCard}>
-              <span className={styles.problemIndex}>Friction Point 03</span>
-              <h3 className={styles.problemTitle}>Last-Minute Empty Chairs</h3>
-              <p className={styles.problemDesc}>
-                Cancellations and no-shows leave clinical chairs idle. The overhead of the clinic keeps running, but the operatory produces zero revenue during those critical hours.
-              </p>
-            </div>
-
-            <div className={styles.problemCard}>
-              <span className={styles.problemIndex}>Friction Point 04</span>
-              <h3 className={styles.problemTitle}>Scattered Clinical Data</h3>
-              <p className={styles.problemDesc}>
-                Dentists jump between one tool for X-rays, another for paper charts, and a third for billing. Handoffs between hygienists, doctors, and front-desk staff result in lost billables.
-              </p>
-            </div>
-
-            <div className={styles.problemCard}>
-              <span className={styles.problemIndex}>Friction Point 05</span>
-              <h3 className={styles.problemTitle}>Unpaid Patient Balances</h3>
-              <p className={styles.problemDesc}>
-                Without itemized treatment acceptance and clear payment schedules, patient balances linger uncollected for 90+ days, leading to costly bad debt write-offs.
-              </p>
-            </div>
-
-            <div className={styles.problemCard}>
-              <span className={styles.problemIndex}>Friction Point 06</span>
-              <h3 className={styles.problemTitle}>Blind Operational Management</h3>
-              <p className={styles.problemDesc}>
-                Practice owners only discover their revenue drop weeks later when viewing monthly bank statements, with no predictive warning of upcoming chair capacity drop-offs.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Platform Overview Grid */}
-      <section className={styles.section} id="modules">
+      {/* 3. Platform Overview Grid */}
+      <section className={styles.section} id="overview">
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <div className={styles.eyebrow}>Unified Architecture</div>

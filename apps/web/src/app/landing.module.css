@@ -200,69 +200,7 @@
 }
 
 /* ==========================================================================
-   2. Problem Section
-   ========================================================================== */
-.sectionAlt {
-  padding: 100px 0;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.problemGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-}
-
-@media (min-width: 768px) {
-  .problemGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.problemCard {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: all 0.2s ease;
-}
-
-.problemCard:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-  transform: translateY(-2px);
-}
-
-.problemIndex {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #dc2626;
-  background: #fee2e2;
-  padding: 4px 10px;
-  border-radius: 6px;
-  max-width: fit-content;
-}
-
-.problemTitle {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-}
-
-.problemDesc {
-  font-size: 0.925rem;
-  color: #475569;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* ==========================================================================
-   3. Platform Overview Grid
+   2. Platform Overview Grid
    ========================================================================== */
 .section {
   padding: 100px 0;
