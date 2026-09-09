@@ -46,6 +46,7 @@ import {
 } from './clinic-workflows';
 import { subscriptions, patientImports } from './subscriptions';
 import { voiceCallTasks } from './voice-agent';
+import { registrationIntents, paymentRecords } from './registration-payments';
 
 /**
  * Drizzle ORM relation definitions.
@@ -119,6 +120,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   assignedOpportunities: many(revenueOpportunities),
   performedOutreachLogs: many(opportunityOutreachLogs),
   sentCommunications: many(communications),
+  registrationIntents: many(registrationIntents),
+  paymentRecords: many(paymentRecords),
 }));
 
 // Role relations
@@ -928,6 +931,36 @@ export const voiceCallTasksRelations = relations(voiceCallTasks, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+// RegistrationIntents relations
+export const registrationIntentsRelations = relations(registrationIntents, ({ one, many }) => ({
+  user: one(users, {
+    fields: [registrationIntents.userId],
+    references: [users.id],
+  }),
+  organization: one(organizations, {
+    fields: [registrationIntents.organizationId],
+    references: [organizations.id],
+  }),
+  paymentRecords: many(paymentRecords),
+}));
+
+// PaymentRecords relations
+export const paymentRecordsRelations = relations(paymentRecords, ({ one }) => ({
+  user: one(users, {
+    fields: [paymentRecords.userId],
+    references: [users.id],
+  }),
+  registrationIntent: one(registrationIntents, {
+    fields: [paymentRecords.registrationIntentId],
+    references: [registrationIntents.id],
+  }),
+  organization: one(organizations, {
+    fields: [paymentRecords.organizationId],
+    references: [organizations.id],
+  }),
+}));
+
 
 
 

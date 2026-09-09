@@ -18,6 +18,7 @@ import { formatErrorForClient } from '@/lib/errors';
 import { createOrganizationSchema, createLocationSchema } from '../domain/validation';
 import { DEFAULT_ROLES, DEFAULT_PERMISSIONS } from '@dental/db';
 import { resolveTenantContext, requirePermission } from '@/lib/permissions';
+import { billingService } from '@/features/payments';
 
 interface ActionResult<T = unknown> {
   success: boolean;
@@ -67,137 +68,161 @@ export async function createOrganization(
       };
     }
 
+    // 1. Verify user's payment entitlement before proceeding
+    const entitlement = await billingService.entitlement.checkUserRegistrationEntitlement(session.user.id);
+    if (!entitlement.canOnboard || !entitlement.paidIntentId) {
+      return {
+        success: false,
+        error: {
+          message: 'A verified registration payment is required before you can activate your clinic.',
+          code: 'PAYMENT_REQUIRED',
+        },
+      };
+    }
+
+    const intentIdToClaim = (formData.get('intentId') as string) || entitlement.paidIntentId;
     const correlationId = generateCorrelationId();
     const slug = slugify(parsed.data.name) + '-' + Date.now().toString(36);
 
-    // Create org
-    const [org] = await db
-      .insert(organizations)
-      .values({
-        name: parsed.data.name,
-        slug,
-        defaultCurrency: parsed.data.defaultCurrency,
-        defaultTimezone: parsed.data.defaultTimezone,
-        phone: parsed.data.phone || null,
-        email: parsed.data.email || null,
-      })
-      .returning();
-
-    if (!org) throw new Error('Failed to create organization');
-
-    // Create default location
-    const locationName = formData.get('locationName') as string || 'Main Branch';
-    const locationAddress = formData.get('locationAddress') as string || '';
-
-    const [location] = await db
-      .insert(locations)
-      .values({
-        organizationId: org.id,
-        name: locationName,
-        address: locationAddress || null,
-        phone: parsed.data.phone || null,
-        timezone: parsed.data.defaultTimezone,
-      })
-      .returning();
-
-    // Ensure permissions exist
-    const existingPerms = await db.select().from(permissions);
-    const permMap: Record<string, string> = {};
-    for (const p of existingPerms) {
-      permMap[p.code] = p.id;
-    }
-
-    // Insert any missing permissions
-    for (const perm of DEFAULT_PERMISSIONS) {
-      if (!permMap[perm.code]) {
-        const [inserted] = await db
-          .insert(permissions)
-          .values({
-            code: perm.code,
-            name: perm.name,
-            description: `Permission: ${perm.name}`,
-            module: perm.module,
-          })
-          .onConflictDoNothing({ target: permissions.code })
-          .returning();
-        if (inserted) {
-          permMap[perm.code] = inserted.id;
-        }
-      }
-    }
-
-    // Create roles for this organization
-    const roleMap: Record<string, string> = {};
-    for (const [roleName, roleDef] of Object.entries(DEFAULT_ROLES)) {
-      const [role] = await db
-        .insert(roles)
+    const result = await db.transaction(async (tx) => {
+      // Create org
+      const [org] = await tx
+        .insert(organizations)
         .values({
-          organizationId: org.id,
-          name: roleName,
-          description: roleDef.description,
-          isSystem: 'true',
+          name: parsed.data.name,
+          slug,
+          defaultCurrency: parsed.data.defaultCurrency,
+          defaultTimezone: parsed.data.defaultTimezone,
+          phone: parsed.data.phone || null,
+          email: parsed.data.email || null,
         })
         .returning();
 
-      if (role) {
-        roleMap[roleName] = role.id;
-        for (const permCode of roleDef.permissions) {
-          const permId = permMap[permCode];
-          if (permId) {
-            await db.insert(rolePermissions).values({
-              roleId: role.id,
-              permissionId: permId,
-            }).onConflictDoNothing();
+      if (!org) throw new Error('Failed to create organization');
+
+      // Authoritatively claim the paid registration intent for this new organization
+      await billingService.entitlement.claimIntentForOrganization(
+        tx,
+        intentIdToClaim,
+        org.id,
+        session.user.id,
+      );
+
+      // Create default location
+      const locationName = (formData.get('locationName') as string) || 'Main Branch';
+      const locationAddress = (formData.get('locationAddress') as string) || '';
+
+      const [location] = await tx
+        .insert(locations)
+        .values({
+          organizationId: org.id,
+          name: locationName,
+          address: locationAddress || null,
+          phone: parsed.data.phone || null,
+          timezone: parsed.data.defaultTimezone,
+        })
+        .returning();
+
+      // Ensure permissions exist
+      const existingPerms = await tx.select().from(permissions);
+      const permMap: Record<string, string> = {};
+      for (const p of existingPerms) {
+        permMap[p.code] = p.id;
+      }
+
+      for (const perm of DEFAULT_PERMISSIONS) {
+        if (!permMap[perm.code]) {
+          const [inserted] = await tx
+            .insert(permissions)
+            .values({
+              code: perm.code,
+              name: perm.name,
+              description: `Permission: ${perm.name}`,
+              module: perm.module,
+            })
+            .onConflictDoNothing({ target: permissions.code })
+            .returning();
+          if (inserted) {
+            permMap[perm.code] = inserted.id;
           }
         }
       }
-    }
 
-    // Create Owner membership for current user
-    const ownerRoleId = roleMap['Owner'];
-    if (!ownerRoleId) throw new Error('Owner role not created');
+      // Create roles for this organization
+      const roleMap: Record<string, string> = {};
+      for (const [roleName, roleDef] of Object.entries(DEFAULT_ROLES)) {
+        const [role] = await tx
+          .insert(roles)
+          .values({
+            organizationId: org.id,
+            name: roleName,
+            description: roleDef.description,
+            isSystem: 'true',
+          })
+          .returning();
 
-    const [membership] = await db
-      .insert(memberships)
-      .values({
-        organizationId: org.id,
-        userId: session.user.id,
-        roleId: ownerRoleId,
-        status: 'active',
-      })
-      .returning();
+        if (role) {
+          roleMap[roleName] = role.id;
+          for (const permCode of roleDef.permissions) {
+            const permId = permMap[permCode];
+            if (permId) {
+              await tx.insert(rolePermissions).values({
+                roleId: role.id,
+                permissionId: permId,
+              }).onConflictDoNothing();
+            }
+          }
+        }
+      }
 
-    // Grant location access
-    if (membership && location) {
-      await db.insert(membershipLocations).values({
-        membershipId: membership.id,
-        locationId: location.id,
-      });
-    }
+      // Create Owner membership for current user
+      const ownerRoleId = roleMap['Owner'];
+      if (!ownerRoleId) throw new Error('Owner role not created');
 
-    // Audit
+      const [membership] = await tx
+        .insert(memberships)
+        .values({
+          organizationId: org.id,
+          userId: session.user.id,
+          roleId: ownerRoleId,
+          status: 'active',
+        })
+        .returning();
+
+      // Grant location access
+      if (membership && location) {
+        await tx.insert(membershipLocations).values({
+          membershipId: membership.id,
+          locationId: location.id,
+        });
+      }
+
+      return { organizationId: org.id, locationId: location!.id };
+    });
+
+    // Audit (outside transaction)
     await createAuditEvent({
-      organizationId: org.id,
+      organizationId: result.organizationId,
       actorUserId: session.user.id,
       entityType: 'organization',
-      entityId: org.id,
+      entityId: result.organizationId,
       action: AuditActions.ORGANIZATION_CREATED,
       correlationId,
     });
 
     await createAuditEvent({
-      organizationId: org.id,
-      locationId: location?.id,
+      organizationId: result.organizationId,
+      locationId: result.locationId,
       actorUserId: session.user.id,
       entityType: 'location',
-      entityId: location!.id,
+      entityId: result.locationId,
       action: AuditActions.LOCATION_CREATED,
       correlationId,
     });
 
     return {
       success: true,
-      data: { organizationId: org.id, locationId: location!.id },
+      data: result,
     };
   } catch (error) {
     return { success: false, error: formatErrorForClient(error) };

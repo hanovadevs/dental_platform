@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Button, Input, Select, Badge, Dialog } from '@/components/ui';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import {
@@ -289,6 +290,24 @@ export function OperationsClientView({
             Manage clinical staff, operatory chairs, inventory stock levels, dental lab cases, and templates.
           </span>
         </div>
+        <Link
+          href="/operations/payments"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            color: '#0284c7',
+            background: '#f0f9ff',
+            border: '1px solid #bae6fd',
+            borderRadius: '10px',
+            padding: '8px 16px',
+            textDecoration: 'none',
+          }}
+        >
+          Registration Payments Ledger →
+        </Link>
       </div>
 
       {/* Tab Navigation */}
