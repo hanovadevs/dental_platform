@@ -202,8 +202,26 @@
   text-decoration: underline;
 }
 
+.policyConsent {
+  margin-top: 16px;
+  font-size: 0.75rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.policyConsent a {
+  color: #0284c7;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.policyConsent a:hover {
+  color: #0369a1;
+}
+
 .securityNote {
-  margin-top: 20px;
+  margin-top: 14px;
   font-size: 0.75rem;
   color: #94a3b8;
   text-align: center;

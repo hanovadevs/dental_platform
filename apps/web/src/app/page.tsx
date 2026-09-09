@@ -691,6 +691,16 @@ export default async function LandingPage() {
                 <li><Link href="/dashboard" className={styles.footerLink}>Practice Dashboard</Link></li>
               </ul>
             </div>
+
+            <div className={styles.footerCol}>
+              <h4 className={styles.footerColTitle}>Compliance & Legal</h4>
+              <ul className={styles.footerLinks}>
+                <li><Link href="/privacy" className={styles.footerLink}>Privacy Policy</Link></li>
+                <li><Link href="/terms" className={styles.footerLink}>Terms & Conditions</Link></li>
+                <li><Link href="/refund-policy" className={styles.footerLink}>Return & Refund</Link></li>
+                <li><Link href="/shipping-policy" className={styles.footerLink}>Service Delivery</Link></li>
+              </ul>
+            </div>
           </div>
 
           <div className={styles.footerBottom}>

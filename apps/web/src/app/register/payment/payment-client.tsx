@@ -138,6 +138,14 @@ export function PaymentClient({
           {loading ? 'Connecting to Premier PayFast...' : 'Continue to Secure Payment'}
         </button>
 
+        <p className={styles.policyConsent}>
+          By continuing, you agree to our{' '}
+          <Link href="/terms" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</Link>,{' '}
+          <Link href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</Link>,{' '}
+          <Link href="/refund-policy" target="_blank" rel="noopener noreferrer">Return &amp; Refund Policy</Link>, and{' '}
+          <Link href="/shipping-policy" target="_blank" rel="noopener noreferrer">Service Delivery Policy</Link>.
+        </p>
+
         <p className={styles.secondaryLink}>
           Already registered?{' '}
           <Link href="/login">Login to your clinic</Link>
